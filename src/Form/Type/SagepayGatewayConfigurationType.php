@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
 
 final class SagepayGatewayConfigurationType extends AbstractType
 {
@@ -40,10 +41,14 @@ final class SagepayGatewayConfigurationType extends AbstractType
                     ])
                 ],
             ])
-           ->add('currency', CurrencyChoiceType::class, [
+            ->add('currency', TextType::class, [
                 'label' => 'sbarbat_sylius_sagepay_plugin.ui.currency',
-                'required' => true,
-                'multiple' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'sbarbat_sylius_sagepay_plugin.currency.not_blank',
+                        'groups' => ['sylius'],
+                    ])
+                ],
             ])
             ->add('encryptionPasswordTest', TextType::class, [
                 'label' => 'sbarbat_sylius_sagepay_plugin.ui.encryptation_password_test',
