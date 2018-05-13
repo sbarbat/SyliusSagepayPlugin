@@ -1,0 +1,9 @@
+####
+# This is a very important security setting preventing hackers from using certain ways of accessing the sensitve information
+# stored in the config.php file, removing the following lines is not recomended
+<Files ~ ".*config\.php.*">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</Files>
+####

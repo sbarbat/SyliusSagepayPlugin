@@ -1,0 +1,7 @@
+services:
+    sbarbat_sylius_sagepay_plugin.gateway_factory.sagepay:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments:
+            - Sbarbat\SyliusSagepayPlugin\SagepayGatewayFactory
+        tags:
+            - { name: payum.gateway_factory_builder, factory: sagepay }

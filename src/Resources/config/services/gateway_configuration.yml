@@ -1,0 +1,6 @@
+services:
+    sbarbat_sylius_sagepay_plugin.form.type.sagepay_gateway_configuration:
+        class: Sbarbat\SyliusSagepayPlugin\Form\Type\SagepayGatewayConfigurationType
+        tags:
+            - { name: sylius.gateway_configuration_type, type: sagepay, label: sbarbat_sylius_sagepay_plugin.ui.sagepay_gateway_label }
+            - { name: form.type }
