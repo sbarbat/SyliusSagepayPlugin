@@ -14,11 +14,9 @@
     "require": {
         "php": "^7.1",
 
-        "sylius/sylius": "^1.0",
-        "payum/core": "^1.5"
+        "sylius/sylius": "^1.1"
     },
     "require-dev": {
-        "payum/core": "^1.5@dev",
         "php-http/guzzle6-adapter": "^1.0",
         "phpspec/phpspec": "^3.2",
         "phpunit/phpunit": "^7",
