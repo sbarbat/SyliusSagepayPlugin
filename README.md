@@ -1,7 +1,7 @@
 ## Installation
 
 ```bash
-$ composer require sbarbat/sylius-sagepay-plugin
+$ composer require sbarbat/sagepay-plugin
 ```
     
 Add plugin dependencies to your AppKernel.php file:

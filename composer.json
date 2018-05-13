@@ -1,5 +1,5 @@
 {
-    "name": "sbarbat/sylius-sagepay-plugin",
+    "name": "sbarbat/sagepay-plugin",
     "type": "sylius-plugin",
     "description": "The Payum Sagepay plugin",
     "keywords": ["payment", "sagepay", "winebuyers"],
