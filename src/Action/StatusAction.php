@@ -54,9 +54,7 @@ class StatusAction implements ActionInterface, ApiAwareInterface, GatewayAwareIn
             $sagepayResponse = (new SagepayResponse($this->api))->parseResponse();
 
             $this->resolvePaymentStatus($sagepayResponse, $request);
-
-            $details['statusDetail'] = $sagepayResponse->getStatusDetail();
-            $details['txAuthNo'] = $sagepayResponse->getTxAuthNo();
+            $details = array_merge($details, $sagepayResponse->getArrayForDetails());
         } else {
             $request->markNew();
         }
