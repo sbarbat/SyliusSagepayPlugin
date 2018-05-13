@@ -1,71 +1,27 @@
-# Skeleton
-
-The Payum extension to rapidly build new extensions.
-
-1. Create new project
+## Installation
 
 ```bash
-$ composer create-project payum/skeleton
+$ composer require sbarbat/sylius-sagepay-plugin
 ```
-
-2. Replace all occurrences of `payum` with your vendor name. It may be your github name, for now let's say you choose: `acme`.
-3. Replace all occurrences of `skeleton` with a payment gateway name. For example Stripe, Paypal etc. For now let's say you choose: `paypal`.
-4. Register a gateway factory to the payum's builder and create a gateway:
-
+    
+Add plugin dependencies to your AppKernel.php file:
 ```php
-<?php
-
-use Payum\Core\PayumBuilder;
-use Payum\Core\GatewayFactoryInterface;
-
-$defaultConfig = [];
-
-$payum = (new PayumBuilder)
-    ->addGatewayFactory('paypal', function(array $config, GatewayFactoryInterface $coreGatewayFactory) {
-        return new \Acme\Paypal\PaypalGatewayFactory($config, $coreGatewayFactory);
-    })
-
-    ->addGateway('paypal', [
-        'factory' => 'paypal',
-        'sandbox' => true,
-    ])
-
-    ->getPayum()
-;
+public function registerBundles()
+{
+    return array_merge(parent::registerBundles(), [
+        ...
+        
+        new \Sbarbat\SyliusSagepayPlugin\SbarbatSyliusSagepayPlugin(),
+    ]);
+}
 ```
 
-5. While using the gateway implement all method where you get `Not implemented` exception:
+### For now this plugin only offer integration for Sagepay Form gateway.
 
-```php
-<?php
+### Sagepay Form Integration Protocol and Guidelines
 
-use Payum\Core\Request\Capture;
+- https://www.sagepay.co.uk/file/25041/download-document/FORM_Integration_and_Protocol_Guidelines_270815.pdf
 
-$paypal = $payum->getGateway('paypal');
+## Support
 
-$model = new \ArrayObject([
-  // ...
-]);
-
-$paypal->execute(new Capture($model));
-```
-
-## Resources
-
-* [Site](https://payum.forma-pro.com/)
-* [Documentation](https://github.com/Payum/Payum/blob/master/docs/index.md#general)
-* [Questions](http://stackoverflow.com/questions/tagged/payum)
-* [Issue Tracker](https://github.com/Payum/Payum/issues)
-* [Twitter](https://twitter.com/payumphp)
-
-## Developed by Forma-Pro
-
-Forma-Pro is a full stack development company which interests also spread to open source development. 
-Being a team of strong professionals we have an aim an ability to help community by developing cutting edge solutions in the areas of e-commerce, docker & microservice oriented architecture where we have accumulated a huge many-years experience. 
-Our main specialization is Symfony framework based solution, but we are always looking to the technologies that allow us to do our job the best way. We are committed to creating solutions that revolutionize the way how things are developed in aspects of architecture & scalability.
-
-If you have any questions and inquires about our open source development, this product particularly or any other matter feel free to contact at opensource@forma-pro.com
-
-## License
-
-Skeleton is released under the [MIT License](LICENSE).
+Do you want us to customize this plugin for your specific needs? Write us an email on barbatsan@gmail.com :computer:
