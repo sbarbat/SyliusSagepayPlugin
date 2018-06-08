@@ -2,6 +2,13 @@ services:
     sbarbat_sylius_sagepay_plugin.gateway_factory.sagepay:
         class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
         arguments:
-            - Sbarbat\SyliusSagepayPlugin\SagepayGatewayFactory
+            - Sbarbat\SyliusSagepayPlugin\SagepayFormGatewayFactory
         tags:
             - { name: payum.gateway_factory_builder, factory: sagepay }
+    
+    sbarbat_sylius_sagepay_plugin.gateway_factory.sagepay_server:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments:
+            - Sbarbat\SyliusSagepayPlugin\SagepayDirectGatewayFactory
+        tags:
+            - { name: payum.gateway_factory_builder, factory: sagepay_direct }

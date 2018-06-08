@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Sbarbat\SyliusSagepayPlugin\Action;
+namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Refund;
+use Payum\Core\Request\Cancel;
 
-class RefundAction implements ActionInterface
+class CancelAction implements ActionInterface
 {
     use GatewayAwareTrait;
 
     /**
      * {@inheritDoc}
      *
-     * @param Refund $request
+     * @param Cancel $request
      */
     public function execute($request)
     {
@@ -34,7 +34,7 @@ class RefundAction implements ActionInterface
     public function supports($request)
     {
         return
-            $request instanceof Refund &&
+            $request instanceof Cancel &&
             $request->getModel() instanceof \ArrayAccess
         ;
     }

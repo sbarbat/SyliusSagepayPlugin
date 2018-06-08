@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Sbarbat\SyliusSagepayPlugin\Action\AuthorizeAction;
-use Sbarbat\SyliusSagepayPlugin\Action\CancelAction;
-use Sbarbat\SyliusSagepayPlugin\Action\ConvertPaymentAction;
-use Sbarbat\SyliusSagepayPlugin\Action\CaptureAction;
-use Sbarbat\SyliusSagepayPlugin\Action\NotifyAction;
-use Sbarbat\SyliusSagepayPlugin\Action\RefundAction;
-use Sbarbat\SyliusSagepayPlugin\Action\StatusAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\AuthorizeAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\CancelAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\ConvertPaymentAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\CaptureAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\NotifyAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\RefundAction;
+use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\StatusAction;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
 
-class SagepayGatewayFactory extends GatewayFactory
+class SagepayFormGatewayFactory extends GatewayFactory
 {
     /**
      * {@inheritDoc}
@@ -23,7 +23,7 @@ class SagepayGatewayFactory extends GatewayFactory
     {
         $config->defaults([
             'payum.factory_name' => 'sagepay',
-            'payum.factory_title' => 'Sagepay',
+            'payum.factory_title' => 'Sagepay Form',
             'payum.action.capture' => new CaptureAction(),
             // No needed for form integration for now
             //'payum.action.notify' => new NotifyAction(),
@@ -33,7 +33,7 @@ class SagepayGatewayFactory extends GatewayFactory
 
         if (false == $config['payum.api']) {
             $config['payum.default_options'] = array(
-                'integration' => 'form',
+                'integration' => SagepayIntegrations::FORM,
                 'sandbox' => true,
                 'currency' => 'GBP',
                 'vendorName' => '',

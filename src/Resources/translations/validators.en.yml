@@ -7,3 +7,11 @@ sbarbat_sylius_sagepay_plugin:
         not_blank: Encryptation password for sandbox mode cannot be blank.
     encryptation_password_live:
         not_blank: Encryptation password for live mode cannot be blank.
+    integration_key_live:
+        not_blank: Live integration key cannot be blank.
+    integration_password_live:
+        not_blank: Live integration password cannot be blank.
+    integration_key_test:
+        not_blank: Test integration key cannot be blank.
+    integration_password_test:
+        not_blank: Test integration password cannot be blank.

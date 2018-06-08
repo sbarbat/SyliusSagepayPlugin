@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sbarbat\SyliusSagepayPlugin\Action;
+namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
@@ -22,17 +22,13 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
+use Sbarbat\SyliusSagepayPlugin\Action\Api\FormApiAwareAction;
 
-class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
+class ConvertPaymentAction extends FormApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
 {
-    use ApiAwareTrait;
     use GatewayAwareTrait;
     use GenericTokenFactoryAwareTrait;
 
-    public function __construct()
-    {
-        $this->apiClass = SagepayFormApi::class;
-    }
     /**
      * {@inheritDoc}
      *

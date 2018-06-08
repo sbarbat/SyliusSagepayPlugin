@@ -23,4 +23,10 @@ class SagepayStatusType
     // If an error has occurred at Sage Pay (these are very infrequent, but your site should handle them anyway. 
     // They normally indicate a problem with authorisation).
     const ERROR = 'ERROR';
+
+    // Missing properties or badly formed body
+    const MALFORMED = 'MALFORMED';
+
+    //Invalid property values supplied
+    const INVALID = 'INVALID';
 }

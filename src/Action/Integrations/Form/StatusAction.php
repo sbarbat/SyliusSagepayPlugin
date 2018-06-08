@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sbarbat\SyliusSagepayPlugin\Action;
+namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Request\GetStatusInterface;
@@ -25,16 +25,11 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayResponse;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
+use Sbarbat\SyliusSagepayPlugin\Action\Api\FormApiAwareAction;
 
-class StatusAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
+class StatusAction extends FormApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
-    use ApiAwareTrait;
     use GatewayAwareTrait;
-
-    public function __construct()
-    {
-        $this->apiClass = SagepayFormApi::class;
-    }
 
     /**
      * {@inheritDoc}

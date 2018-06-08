@@ -10,15 +10,15 @@ use Payum\Core\ApiAwareTrait;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 
-use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
+use Sbarbat\SyliusSagepayPlugin\SagepayDirectApi;
 
-abstract class BaseApiAwareAction implements ActionInterface, GatewayAwareInterface, ApiAwareInterface
+abstract class DirectApiAwareAction implements GatewayAwareInterface, ApiAwareInterface
 {
     use GatewayAwareTrait;
     use ApiAwareTrait;
 
     public function __construct()
     {
-        $this->apiClass = SagepayFormApi::class;
+        $this->apiClass = SagepayDirectApi::class;
     }
 }

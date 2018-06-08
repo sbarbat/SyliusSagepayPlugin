@@ -1,0 +1,182 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% include '@SyliusUi/_stylesheets.html.twig' with {
+        'path' : 'bundles/sbarbatsyliussagepayplugin/card.css'
+    } %}
+{% endblock %}
+
+{% block content %}
+    {{ parent() }}
+
+    <div class="ui segment">
+        <div class='card-wrapper'></div>
+
+        <div class="error-list ui error message hidden">
+            <i class="close icon"></i>
+            <div class="header">
+            There were some errors with your payment
+            </div>
+            <ul class="list">
+                
+            </ul>
+        </div>
+
+        <form class="ui loadable form" method="POST" action="{{ actionUrl }}">
+            <div class="fields">
+                <div class="sixteen wide field">
+                    <label>Name</label>
+                    <input type="text" data-card-details="cardholder-name" name="name" placeholder="Name on card">
+                </div>
+            </div>
+            <div class="fields">
+                <div class="seven wide field">
+                    <label>Card Number</label>
+                    <input type="text" data-card-details="card-number" name="number" maxlength="20" placeholder="Card #">
+                </div>
+                <div class="three wide field">
+                    <label>CVC</label>
+                    <input type="text" data-card-details="security-code" name="cvc" maxlength="3" placeholder="CVC">
+                </div>
+                <div class="six wide field">
+                    <label>Expiration</label>
+                    <input type="text" data-card-details="expiry-date" name="expiry" maxlength="7" placeholder="Expiry">
+                </div>
+            </div>
+
+            <input type="hidden" name="card-identifier">
+            <input type="hidden" name="merchant-session-key">
+
+            <div class="submit-btn ui disabled icon input">
+                <i class="search icon"></i>
+                <input class="ui large blue icon labeled button" type="submit" value="Pay">
+            </div>
+            
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- Loads jQuery if no loaded -->
+    <script>
+        window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">\x3C/script>')
+    </script>
+    <script src="{{ asset('bundles/sbarbatsyliussagepayplugin/card.js') }}"></script>
+
+    <!-- Loads Sagepay SDK -->
+    <script src="{{ sagepayJs }}"></script>
+
+    <script>
+        var $ = $ || jQuery;
+        var merchantSessionKey = null;
+        var submited = false;
+        
+
+        $(document).ready(function() {
+            $('.submit-btn').removeClass('disabled');
+            var errorList = $('.error-list');
+
+            $('form').on('submit', function(e) {       
+                var form = $(this);
+
+                if(false == submited) {
+                    form.addClass('loading');
+
+                    errorList.slideUp();
+                    errorList.find('.list').html('');
+
+                    e.preventDefault(e);
+
+                    $.post('{{ actionUrl }}', {'get_merchant_session': true, 'payum_token': '{{ token.hash }}'}).then(function (response) {
+                        var merchantKey = JSON.parse(response).merchantSessionKey;
+                        
+                        var nameInput = $('[name="name"]');
+                        var numberInput = $('[name="number"]');
+                        var cvcInput = $('[name="cvc"]');
+                        var expiryInput = $('[name="expiry"]');
+
+                        var cardIdentifierInput = $('[name="card-identifier"]');
+                        var merchantKeyInput = $('[name="merchant-session-key"]');
+
+                        merchantKeyInput.val(merchantKey);
+
+                        sagepayOwnForm({ merchantSessionKey: merchantKey }).tokeniseCardDetails({
+                            cardDetails: {
+                                cardholderName: nameInput.val(),
+                                cardNumber: numberInput.val().replace(/\s/g,''),
+                                expiryDate: expiryInput.val().replace('/', '').replace(/\s/g,''),
+                                securityCode: cvcInput.val()
+                            },
+                            onTokenised: function (result) {
+                                if (result.success) {
+                                    cardIdentifierInput.val(result.cardIdentifier);
+                                    submited = true;
+                                    form.submit();
+                                } else {
+                                    form.removeClass('loading');
+                                    console.error(result);
+
+                                    for(e in result.errors) {
+                                        errorList.find('.list').append('<li>' + result.errors[e].message + '</li>'); 
+                                    }
+                                    errorList.slideDown();
+                                }
+                            }
+                        });
+                    }).catch(function(error) {
+                        console.error(error);
+                        form.removeClass('loading');
+                    })
+                }
+            });
+        });
+        
+
+
+        {# document
+            .querySelector('[type=submit]')
+            .addEventListener('click', function (e) {
+                e.preventDefault(); // to prevent form submission
+                sagepayOwnForm({merchantSessionKey: getMerchantSessionKey()}).tokeniseCardDetails({
+                    cardDetails: {
+                        cardholderName: document.querySelector('[data-card-details="cardholder-name"]').value,
+                        cardNumber: document.querySelector('[data-card-details="card-number"]').value,
+                        expiryDate: document.querySelector('[data-card-details="expiry-date"]').value,
+                        securityCode: document.querySelector('[data-card-details="security-code"]').value
+                    },
+                    onTokenised: function (result) {
+                        if (result.success) {
+                            document.querySelector('[name="card-identifier"]').value = result.cardIdentifier;
+                            document.querySelector('form').submit();
+                        } else {
+                            alert(JSON.stringify(result));
+                        }
+                    }
+                });
+            }, false); #}
+
+        var card = new Card({
+            // a selector or DOM element for the form where users will
+            // be entering their information
+            form: 'form', // *required*
+            // a selector or DOM element for the container
+            // where you want the card to appear
+            container: '.card-wrapper', // *required*
+
+            // Default placeholders for rendered fields - optional
+            placeholders: {
+                number: '•••• •••• •••• ••••',
+                name: 'Full Name',
+                expiry: '••/••',
+                cvc: '•••'
+            },
+
+            masks: {
+                cardNumber: '•' // optional - mask card number
+            }
+        });
+    </script>
+{% endblock %}

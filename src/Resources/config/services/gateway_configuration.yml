@@ -4,3 +4,9 @@ services:
         tags:
             - { name: sylius.gateway_configuration_type, type: sagepay, label: sbarbat_sylius_sagepay_plugin.ui.sagepay_gateway_label }
             - { name: form.type }
+
+    sbarbat_sylius_sagepay_plugin.form.type.sagepay_direct_gateway_configuration:
+        class: Sbarbat\SyliusSagepayPlugin\Form\Type\SagepayDirectGatewayConfigurationType
+        tags:
+            - { name: sylius.gateway_configuration_type, type: sagepay_direct, label: sbarbat_sylius_sagepay_plugin.ui.sagepay_direct_gateway_label }
+            - { name: form.type }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sbarbat\SyliusSagepayPlugin\Action;
+namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;

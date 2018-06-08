@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
 
 
-final class SagepayGatewayConfigurationType extends AbstractType
+final class SagepayDirectGatewayConfigurationType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -51,20 +51,38 @@ final class SagepayGatewayConfigurationType extends AbstractType
                     ])
                 ],
             ])
-            ->add('encryptionPasswordTest', TextType::class, [
-                'label' => 'sbarbat_sylius_sagepay_plugin.ui.encryptation_password_test',
+            ->add('integrationKeyLive', TextType::class, [
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_key_live',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'sbarbat_sylius_sagepay_plugin.encryptation_password_test.not_blank',
+                        'message' => 'sbarbat_sylius_sagepay_plugin.integration_key_live.not_blank',
                         'groups' => ['sylius'],
                     ])
                 ],
             ])
-            ->add('encryptionPasswordLive', TextType::class, [
-                'label' => 'sbarbat_sylius_sagepay_plugin.ui.encryptation_password_live',
+            ->add('integrationPasswordLive', TextType::class, [
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_password_test',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'sbarbat_sylius_sagepay_plugin.encryptation_password_live.not_blank',
+                        'message' => 'sbarbat_sylius_sagepay_plugin.integration_password_test.not_blank',
+                        'groups' => ['sylius'],
+                    ])
+                ],
+            ])
+            ->add('integrationKeyTest', TextType::class, [
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_key_test',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'sbarbat_sylius_sagepay_plugin.integration_key_test.not_blank',
+                        'groups' => ['sylius'],
+                    ])
+                ],
+            ])
+            ->add('integrationPasswordTest', TextType::class, [
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_password_test',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'sbarbat_sylius_sagepay_plugin.integration_password_test.not_blank',
                         'groups' => ['sylius'],
                     ])
                 ],

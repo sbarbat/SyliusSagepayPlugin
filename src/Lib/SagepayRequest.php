@@ -72,7 +72,8 @@ class SagepayRequest
         'DeliveryState',
         'DeliveryPhone',
         'CustomerName',
-        'CustomerEMail'
+        'CustomerEMail',
+        'Profile'
     ];
 
     /**

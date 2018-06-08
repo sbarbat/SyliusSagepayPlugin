@@ -1,10 +1,20 @@
 sbarbat_sylius_sagepay_plugin:
     ui:
-          mode: Sagepay mode
-          test: Sandbox
-          live: Live
-          vendor_name: Vendor name
-          currency: Currency code for payments
-          encryptation_password_test: Encryptation password for sandbox mode
-          encryptation_password_live: Encryptation password for live mode
-          sagepay_gateway_label: Sagepay gateway
+        mode: Sagepay mode
+        test: Sandbox
+        live: Live
+        vendor_name: Vendor name
+        currency: Currency code for payments
+        encryptation_password_test: Encryptation password for sandbox mode
+        encryptation_password_live: Encryptation password for live mode
+        sagepay_form_gateway_label: Sagepay form gateway
+        sagepay_server_gateway_label: Sagepay server iframe gateway
+        sagepay_direct_gateway_label: Sagepay direct gateway
+        integration: Integration Type
+        integrations:
+            server: Server Iframe
+            form: Form
+        integration_key_live: Live integration key
+        integration_password_live: Live integration password
+        integration_key_test: Test integration key
+        integration_password_test: Test integration password
