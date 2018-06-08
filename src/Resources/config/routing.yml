@@ -1,5 +1,5 @@
-sbarbat_sylius_sagepay_plugin_merchant_session:
-    path: /payment/sagepay/merchant-session
-    methods: ["POST"]
-    defaults:
-        _controller: sbarbat_sylius_sagepay_plugin.controller.merchant_session:getKey
+# sbarbat_sylius_sagepay_plugin_merchant_session:
+#     path: /payment/sagepay/merchant-session
+#     methods: ["POST"]
+#     defaults:
+#         _controller: sbarbat_sylius_sagepay_plugin.controller.merchant_session:getKey

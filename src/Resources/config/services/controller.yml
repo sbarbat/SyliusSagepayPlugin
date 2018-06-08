@@ -1,6 +1,0 @@
-services:
-    sbarbat_sylius_sagepay_plugin.controller.merchant_session:
-        class: Sbarbat\SyliusSagepayPlugin\Controller\MerchantSessionController
-        arguments:
-            - "@payum"
-            - "@sylius.repository.payment"

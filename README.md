@@ -1,3 +1,8 @@
+## Overview
+
+This plugins provides integration for Direct and Form Sagepays integrations.
+
+
 ## Installation
 
 ```bash
@@ -16,7 +21,16 @@ public function registerBundles()
 }
 ```
 
-### For now this plugin only offer integration for Sagepay Form gateway.
+
+### Test Cards
+
+- https://www.sagepay.co.uk/support/12/36/test-card-details-for-your-test-transactions
+
+
+### Sagepay Direct Integration Protocol and Guidelines
+
+- http://integrations.sagepay.co.uk/content/getting-started-integrate-using-your-own-form
+
 
 ### Sagepay Form Integration Protocol and Guidelines
 
