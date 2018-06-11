@@ -57,7 +57,7 @@ class CaptureAction extends DirectApiAwareAction implements ActionInterface, Api
             return;
         }
         
-        $template = $this->api->getOption('payum.template.card_details');
+        $template = $this->api->getOption('payum.sagepay.template.layout');
         $this->gateway->execute($renderTemplate = new RenderTemplate($template, array(
             'model' => $model,
             'paymentId' => $payment->getId(),

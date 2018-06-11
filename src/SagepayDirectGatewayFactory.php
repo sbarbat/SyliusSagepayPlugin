@@ -25,7 +25,7 @@ class SagepayDirectGatewayFactory extends GatewayFactory
             'payum.factory_name' => 'sagepay_direct',
             'payum.factory_title' => 'Sagepay Direct',
 
-            'payum.template.card_details' => '@PayumSagepay/card_details.html.twig',
+            'payum.sagepay.template.layout' => '@PayumSagepay/card_details.html.twig',
             'payum.sagepay.merchant_session_route_name' => 'sbarbat_sylius_sagepay_plugin_merchant_session',
 
             'payum.action.capture' => new CaptureAction(),

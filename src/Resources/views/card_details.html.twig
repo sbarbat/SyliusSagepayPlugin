@@ -1,4 +1,6 @@
-{% extends '@SyliusShop/layout.html.twig' %}
+{% extends layout ?: 'SyliusPayumBundle::layout.html.twig' %}
+
+{% import "@SyliusShop/Common/Macro/money.html.twig" as money %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -10,17 +12,29 @@
 {% block content %}
     {{ parent() }}
 
-    <div class="ui segment">
-        <div class='card-wrapper'></div>
+    <div class="ui raised very padded text container segment">
+        <h1 class="ui header">
+            <div class="content">
+                Payment
+                <div class="sub header">
+                    <p>Payment for order #{{ payment.order.number }}</p>
+                    <p><strong>{{ money.format(payment.amount, payment.currencyCode) }}</strong></p>
+                </div>
+            </div>
+        </h1>
+
+        <div class="ui centered grid">
+            <div class="wide column">
+                <div class='card-wrapper'></div>
+            </div>
+        </div>
 
         <div class="error-list ui error message hidden">
             <i class="close icon"></i>
             <div class="header">
-            There were some errors with your payment
+                There were some errors with your payment
             </div>
-            <ul class="list">
-                
-            </ul>
+            <ul class="list"></ul>
         </div>
 
         <form class="ui loadable form" method="POST" action="{{ actionUrl }}">
@@ -48,11 +62,12 @@
             <input type="hidden" name="card-identifier">
             <input type="hidden" name="merchant-session-key">
 
-            <div class="submit-btn ui disabled icon input">
-                <i class="search icon"></i>
+            <div class="submit-btn ui left disabled icon input">
                 <input class="ui large blue icon labeled button" type="submit" value="Pay">
+                <i class="check icon"></i>
             </div>
             
+
         </form>
     </div>
 {% endblock %}
@@ -73,16 +88,15 @@
         var $ = $ || jQuery;
         var merchantSessionKey = null;
         var submited = false;
-        
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.submit-btn').removeClass('disabled');
             var errorList = $('.error-list');
 
-            $('form').on('submit', function(e) {       
+            $('form').on('submit', function (e) {
                 var form = $(this);
 
-                if(false == submited) {
+                if (false == submited) {
                     form.addClass('loading');
 
                     errorList.slideUp();
@@ -90,9 +104,12 @@
 
                     e.preventDefault(e);
 
-                    $.post('{{ actionUrl }}', {'get_merchant_session': true, 'payum_token': '{{ token.hash }}'}).then(function (response) {
+                    $.post('{{ actionUrl }}', {
+                        'get_merchant_session': true,
+                        'payum_token': '{{ token.hash }}'
+                    }).then(function (response) {
                         var merchantKey = JSON.parse(response).merchantSessionKey;
-                        
+
                         var nameInput = $('[name="name"]');
                         var numberInput = $('[name="number"]');
                         var cvcInput = $('[name="cvc"]');
@@ -103,11 +120,11 @@
 
                         merchantKeyInput.val(merchantKey);
 
-                        sagepayOwnForm({ merchantSessionKey: merchantKey }).tokeniseCardDetails({
+                        sagepayOwnForm({merchantSessionKey: merchantKey}).tokeniseCardDetails({
                             cardDetails: {
                                 cardholderName: nameInput.val(),
-                                cardNumber: numberInput.val().replace(/\s/g,''),
-                                expiryDate: expiryInput.val().replace('/', '').replace(/\s/g,''),
+                                cardNumber: numberInput.val().replace(/\s/g, ''),
+                                expiryDate: expiryInput.val().replace('/', '').replace(/\s/g, ''),
                                 securityCode: cvcInput.val()
                             },
                             onTokenised: function (result) {
@@ -119,44 +136,21 @@
                                     form.removeClass('loading');
                                     console.error(result);
 
-                                    for(e in result.errors) {
-                                        errorList.find('.list').append('<li>' + result.errors[e].message + '</li>'); 
+                                    for (e in result.errors) {
+                                        errorList.find('.list').append('<li>' + result.errors[e].message + '</li>');
                                     }
+                                    errorList.removeClass('hidden');
                                     errorList.slideDown();
                                 }
                             }
                         });
-                    }).catch(function(error) {
+                    }).catch(function (error) {
                         console.error(error);
                         form.removeClass('loading');
                     })
                 }
             });
         });
-        
-
-
-        {# document
-            .querySelector('[type=submit]')
-            .addEventListener('click', function (e) {
-                e.preventDefault(); // to prevent form submission
-                sagepayOwnForm({merchantSessionKey: getMerchantSessionKey()}).tokeniseCardDetails({
-                    cardDetails: {
-                        cardholderName: document.querySelector('[data-card-details="cardholder-name"]').value,
-                        cardNumber: document.querySelector('[data-card-details="card-number"]').value,
-                        expiryDate: document.querySelector('[data-card-details="expiry-date"]').value,
-                        securityCode: document.querySelector('[data-card-details="security-code"]').value
-                    },
-                    onTokenised: function (result) {
-                        if (result.success) {
-                            document.querySelector('[name="card-identifier"]').value = result.cardIdentifier;
-                            document.querySelector('form').submit();
-                        } else {
-                            alert(JSON.stringify(result));
-                        }
-                    }
-                });
-            }, false); #}
 
         var card = new Card({
             // a selector or DOM element for the form where users will
