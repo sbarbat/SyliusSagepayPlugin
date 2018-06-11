@@ -17,11 +17,13 @@
             <div class="content">
                 Payment
                 <div class="sub header">
-                    {% if payment.order is defined %}
-                        <p>Payment for order #{{ payment.order.number }}</p>
-                    {% endif %}
-                    {% if payment.amount is defined and payment.currencyCode %}
-                        <p><strong>{{ money.format(payment.amount, payment.currencyCode) }}</strong></p>
+                    {% if payment is defined %}
+                        {% if payment.order is defined %}
+                            <p>Payment for order #{{ payment.order.number }}</p>
+                        {% endif %}
+                        {% if payment.amount is defined and payment.currencyCode is defined %}
+                            <p><strong>{{ money.format(payment.amount, payment.currencyCode) }}</strong></p>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
