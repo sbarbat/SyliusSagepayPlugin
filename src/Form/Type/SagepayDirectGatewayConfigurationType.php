@@ -61,10 +61,10 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                 ],
             ])
             ->add('integrationPasswordLive', TextType::class, [
-                'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_password_test',
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_password_live',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'sbarbat_sylius_sagepay_plugin.integration_password_test.not_blank',
+                        'message' => 'sbarbat_sylius_sagepay_plugin.integration_password_live.not_blank',
                         'groups' => ['sylius'],
                     ])
                 ],

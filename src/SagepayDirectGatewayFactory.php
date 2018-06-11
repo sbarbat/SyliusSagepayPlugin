@@ -41,10 +41,10 @@ class SagepayDirectGatewayFactory extends GatewayFactory
                 'sandbox' => true,
                 'currency' => 'GBP',
                 'vendorName' => 'winebuyers',
-                'integrationKeyLive' => 'RlbYzr9kbgq8AAoyTkCuPDEKJwtmOF6XSribImFuWZGnDDNeym',
-                'integrationPasswordLive' => 'jufdC7T0SdEbOSAkZbaQmzZvpS7Bco9m6Uy1vUFTVeyFqLdsRaLopJKi3AhovWWsi',
-                'integrationKeyTest' => 'RlbYzr9kbgq8AAoyTkCuPDEKJwtmOF6XSribImFuWZGnDDNeym',
-                'integrationPasswordTest' => 'jufdC7T0SdEbOSAkZbaQmzZvpS7Bco9m6Uy1vUFTVeyFqLdsRaLopJKi3AhovWWsi',
+                'integrationKeyLive' => '',
+                'integrationPasswordLive' => '',
+                'integrationKeyTest' => '',
+                'integrationPasswordTest' => '', 
             );
             $config->defaults($config['payum.default_options']);
             $config['payum.required_options'] = [ 
