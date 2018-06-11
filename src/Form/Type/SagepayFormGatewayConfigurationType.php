@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
 
 
-final class SagepayGatewayConfigurationType extends AbstractType
+final class SagepayFormGatewayConfigurationType extends AbstractType
 {
     /**
      * {@inheritdoc}
