@@ -60,7 +60,7 @@ class CaptureAction extends DirectApiAwareAction implements ActionInterface, Api
         $template = $this->api->getOption('payum.sagepay.template.layout');
         $this->gateway->execute($renderTemplate = new RenderTemplate($template, array(
             'model' => $model,
-            'paymentId' => $payment->getId(),
+            'payment' => $payment,
             'sagepayJs' => $this->api->getApiEndpoint() . 'js/sagepay.js',
             'merchantSessionRoute' => $this->api->getOption('payum.sagepay.merchant_session_route_name'),
             'token' => $request->getToken(),
