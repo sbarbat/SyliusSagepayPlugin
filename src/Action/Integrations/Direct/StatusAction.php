@@ -55,6 +55,7 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
 
         if(($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
             $this->resolvePaymentStatus($request, $model['payment_response']);
+            return;
         } else if(($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
             $this->gateway->addAction(new ExecutePaymentAction());
             $executePaymentRequest = new ExecutePayment($payment);
