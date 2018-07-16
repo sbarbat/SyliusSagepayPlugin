@@ -94,8 +94,8 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
                                     '    "country": "' . $billingAddress->getCountryCode() . '"' .
                                     '},' .
                                     '"shippingDetails": {' .
-                                    '    "recipientFirstName": "' . $shippingStreet->getFirstName() . '",' .
-                                    '    "recipientLastName": "' . $shippingStreet->getLastName() . '",' .
+                                    '    "recipientFirstName": "' . $shippingAddress->getFirstName() . '",' .
+                                    '    "recipientLastName": "' . $shippingAddress->getLastName() . '",' .
                                     '    "shippingAddress1": "' . $shippingStreet . '",'.
                                     '    "shippingCity": "' . $shippingAddress->getCity() . '",'.
                                     '    "shippingPostalCode": "' . $shippingAddress->getPostcode() . '",'.
