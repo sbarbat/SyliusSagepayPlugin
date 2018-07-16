@@ -51,6 +51,20 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
         $payment = $request->getFirstModel();
         $order = $payment->getOrder();
 
+        $billingAddress = $order->getBillingAddress();
+        if($billingAddress->getCompany() != null) {
+            $billingStreet = $billingAddress->getCompany() . ' ' . $billingAddress->getStreet();
+        } else {
+            $billingStreet = $billingAddress->getStreet();
+        }
+
+        $shippingAddress = $order->getShippingAddress();
+        if($shippingAddress->getCompany() != null) {
+            $shippingStreet = $shippingAddress->getCompany() . ' ' . $shippingAddress->getStreet();
+        } else {
+            $shippingStreet = $shippingAddress->getStreet();
+        }
+
         $description = 'Payment for order #' . $order->getNumber();
 
         $curl = curl_init();
@@ -74,10 +88,18 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
                                     '"customerFirstName": "' . $order->getCustomer()->getFirstname() . '",' .
                                     '"customerLastName": "' . $order->getCustomer()->getLastname() . '",' .
                                     '"billingAddress": {' .
-                                    '    "address1": "407 St. John Street",' .
-                                    '    "city": "London",' .
-                                    '    "postalCode": "EC1V 4AB",' .
-                                    '    "country": "GB"' .
+                                    '    "address1": "' . $billingStreet .' ' . '",' .
+                                    '    "city": "' . $billingAddress->getCity() . '",' .
+                                    '    "postalCode": "' . $billingAddress->getPostcode() . '",' .
+                                    '    "country": "' . $billingAddress->getCountryCode() . '"' .
+                                    '},' .
+                                    '"shippingDetails": {' .
+                                    '    "recipientFirstName": "' . $shippingStreet->getFirstName() . '",' .
+                                    '    "recipientLastName": "' . $shippingStreet->getLastName() . '",' .
+                                    '    "shippingAddress1": "' . $shippingStreet . '",'.
+                                    '    "shippingCity": "' . $shippingAddress->getCity() . '",'.
+                                    '    "shippingPostalCode": "' . $shippingAddress->getPostcode() . '",'.
+                                    '    "shippingCountry": "' . $shippingAddress->getCountryCode() . '"'.
                                     '},' .
                                     '"entryMethod": "Ecommerce"' .
                                 '}',
