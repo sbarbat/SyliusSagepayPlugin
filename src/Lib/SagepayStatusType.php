@@ -29,4 +29,7 @@ class SagepayStatusType
 
     //Invalid property values supplied
     const INVALID = 'INVALID';
+
+    //Needs 3D authentication
+    const _3DAUTH = '3DAUTH';
 }
