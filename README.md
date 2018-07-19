@@ -1,6 +1,6 @@
 ## Overview
 
-This plugins provides integration for Direct and Form Sagepays integrations.
+This plugins provides integration for Direct and Form Sagepays integrations. It supports 3D Secure.
 
 
 ## Installation
