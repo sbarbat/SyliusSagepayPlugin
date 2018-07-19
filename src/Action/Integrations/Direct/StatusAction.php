@@ -16,9 +16,10 @@ use Payum\Core\Request\Convert;
 use Payum\Core\Request\Capture;
 use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Reply\HttpPostRedirect;
-use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
+use Payum\Core\Request\RenderTemplate;
 
 use Sylius\Component\Core\Model\PaymentInterface;
 
@@ -30,9 +31,11 @@ use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
 use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\ExecutePaymentAction;
 
-class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
+class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
 {
-    use GatewayAwareTrait;
+    use GatewayAwareTrait,
+        GenericTokenFactoryAwareTrait;
+
 
     public function __construct()
     {
@@ -53,10 +56,37 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
         $payment = $request->getFirstModel();
         $details = $payment->getDetails();
 
-        if(($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
-            $this->resolvePaymentStatus($request, $model['payment_response']);
+        $this->gateway->execute($httpRequest = new GetHttpRequest());
+        
+        if($this->api->is3DAuthResponse($httpRequest)) {
+            /**
+             * If is the return of the 3D Authentication
+             */ 
+
+            // Get the paRes from the response
+            $paRes = $httpRequest->request['PaRes'];
+            // Get Sagepay transaction id
+            $transactionId = $this->getTransactionId($payment);
+
+            // Validate de paRes
+            $this->api->validate3DAuthResponse($transactionId, $paRes);
+
+            $outcome = $this->api->getTransactionOutcome($transactionId);
+
+            if(isset($outcome->status) && SagepayStatusType::OK == strtoupper($outcome->status)) {
+                $this->resolvePaymentStatus($request, $outcome);
+            } else {
+                $request->markFailed();
+            }
+        } else if(!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
+            /**
+             * See if need to redirect for 3DAuth
+             */
+            $this->get3DAuthRedirect($request, $model['payment_response'], $payment);
+        
+            $this->resolvePaymentStatus($request, json_decode($model['payment_response']));
             return;
-        } else if(($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
+        } else if(!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
             $this->gateway->addAction(new ExecutePaymentAction());
             $executePaymentRequest = new ExecutePayment($payment);
             $executePaymentRequest->setModel($model);
@@ -77,8 +107,6 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
      */
     private function resolvePaymentStatus(GetStatusInterface $request, $response): void
     {
-        $response = json_decode($response);
-
         if(!isset($response->status)) {
             $request->markCanceled();
             return;
@@ -122,6 +150,39 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
             $request instanceof GetStatusInterface &&
             $request->getFirstModel() instanceof PaymentInterface
         ;
+    }
+
+    private function get3DAuthRedirect(GetStatusInterface $request, $response, $payment)
+    {
+        $response = json_decode($response);
+        
+        if(isset($response->status) && SagepayStatusType::_3DAUTH == strtoupper($response->status)) {
+            /** @var GatewayConfigInterface $gatewayConfig */
+            $gatewayConfig = $payment->getMethod()->getGatewayConfig();
+
+            $token = $this->tokenFactory->createToken(
+                $gatewayConfig->getGatewayName(),
+                $payment,
+                'sylius_shop_order_after_pay'
+            );
+
+            throw new HttpPostRedirect($response->acsUrl, [
+                'PaReq' => $response->paReq,
+                'TermUrl' => $token->getTargetUrl(),
+                'MD' => $payment->getId()
+            ]);
+        }
+    }
+
+    /**
+     * Gets the transaction id from the 3D Auth response
+     *
+     * @param PaymentInterface $payment
+     * @return int
+     */
+    private function getTransactionId($payment)
+    {
+        return json_decode($payment->getDetails()['payment_response'])->transactionId;
     }
 }
 
