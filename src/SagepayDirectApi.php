@@ -74,6 +74,54 @@ class SagepayDirectApi extends SagepayApi
         return json_encode($response);
     }
 
+    public function validate3DAuthResponse($transactionId, $paRes)
+    {
+        $curl = curl_init();
+ 
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->getApiEndpoint()  . "transactions/" . $transactionId . "/3d-secure",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => '{ "paRes": "' . $paRes . '" }',
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: " . $this->getBasicAuthenticationHeader(),
+                "Cache-Control: no-cache",
+                "Content-Type: application/json"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return json_decode($response);
+    }
+
+    public function getTransactionOutcome($transactionId)
+    {
+        $curl = curl_init();
+ 
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->getApiEndpoint()  . "transactions/" . $transactionId,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: " . $this->getBasicAuthenticationHeader(),
+                "Cache-Control: no-cache",
+            ),
+        ));
+        
+        $response = curl_exec($curl);
+        
+        curl_close($curl);
+
+        return json_decode($response);
+    }
+
+    public function is3DAuthResponse($httpRequest): bool
+    {
+        return isset($httpRequest) && 'POST' == $httpRequest->method && isset($httpRequest->request['PaRes']);
+    }
+
     public function getBasicAuthenticationHeader()
     {
         $str = 'Basic %s';
