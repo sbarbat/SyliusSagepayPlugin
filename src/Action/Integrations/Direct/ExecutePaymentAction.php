@@ -67,49 +67,55 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
 
         $description = 'Payment for order #' . $order->getNumber();
 
+        $request = [
+            "entryMethod" => "Ecommerce",
+            "transactionType" => "Payment",
+            "paymentMethod" => [
+                "card" => [
+                    "merchantSessionKey" => $model['merchant-session-key'],
+                    "cardIdentifier" => $model['card-identifier']
+                ]
+            ],
+            "vendorTxCode" => $model['vendorTxCode'],
+            "amount" => $model['amount'],
+            "currency" => $this->api->getOption('currency'),
+            "description" => $description,
+            "apply3DSecure" => "UseMSPSetting",
+            "customerFirstName" => $order->getCustomer()->getFirstname(),
+            "customerLastName" => $order->getCustomer()->getLastname(),
+            "billingAddress" => [
+                "address1" => $billingStreet,
+                "city" => $billingAddress->getCity(),
+                "postalCode" => $billingAddress->getPostcode(),
+                "country" => $billingAddress->getCountryCode(),
+            ],
+            "shippingDetails" => [
+                "recipientFirstName" => $shippingAddress->getFirstName(),
+                "recipientLastName" => $shippingAddress->getLastName(),
+                "shippingAddress1" => $shippingStreet,
+                "shippingCity" => $shippingAddress->getCity(),
+                "shippingPostalCode" => $shippingAddress->getPostcode(),
+                "shippingCountry" => $shippingAddress->getCountryCode(),
+            ]
+        ];
+          
+        if('US' == $billingAddress->getCountryCode()) {
+            $request["billingAddress"]["state"] =  $billingAddress->getProvinceCode();
+        }
+ 
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->api->getApiEndpoint()  . "transactions",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => '{' .
-                                    '"transactionType": "Payment",' .
-                                    '"paymentMethod": {' .
-                                    '    "card": {' .
-                                    '        "merchantSessionKey": "' . $model['merchant-session-key'] . '",' .
-                                    '        "cardIdentifier": "' . $model['card-identifier'] . '"' .
-                                    '    }' .
-                                    '},' .
-                                    '"vendorTxCode": "' . $model['vendorTxCode'] . '",' .
-                                    '"amount": ' . $model['amount'] . ',' .
-                                    '"currency": "' . $this->api->getOption('currency') . '",' .
-                                    '"description": "' . $description . '",' .
-                                    '"apply3DSecure": "UseMSPSetting",' .
-                                    '"customerFirstName": "' . $order->getCustomer()->getFirstname() . '",' .
-                                    '"customerLastName": "' . $order->getCustomer()->getLastname() . '",' .
-                                    '"billingAddress": {' .
-                                    '    "address1": "' . $billingStreet .' ' . '",' .
-                                    '    "city": "' . $billingAddress->getCity() . '",' .
-                                    '    "postalCode": "' . $billingAddress->getPostcode() . '",' .
-                                    '    "country": "' . $billingAddress->getCountryCode() . '"' .
-                                    '},' .
-                                    '"shippingDetails": {' .
-                                    '    "recipientFirstName": "' . $shippingAddress->getFirstName() . '",' .
-                                    '    "recipientLastName": "' . $shippingAddress->getLastName() . '",' .
-                                    '    "shippingAddress1": "' . $shippingStreet . '",'.
-                                    '    "shippingCity": "' . $shippingAddress->getCity() . '",'.
-                                    '    "shippingPostalCode": "' . $shippingAddress->getPostcode() . '",'.
-                                    '    "shippingCountry": "' . $shippingAddress->getCountryCode() . '"'.
-                                    '},' .
-                                    '"entryMethod": "Ecommerce"' .
-                                '}',
+            CURLOPT_POSTFIELDS => json_encode($request),
             CURLOPT_HTTPHEADER => array(
                 "Authorization: " . $this->api->getBasicAuthenticationHeader(),
                 "Cache-Control: no-cache",
                 "Content-Type: application/json"
             ),
         ));
- 
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
         
