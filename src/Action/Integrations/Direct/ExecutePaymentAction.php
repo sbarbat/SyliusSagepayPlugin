@@ -99,6 +99,10 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
             ]
         ];
           
+        if('US' == $shippingAddress->getCountryCode()) {
+            $request["shippingDetails"]["shippingState"] =  $shippingAddress->getProvinceCode();
+        }
+          
         if('US' == $billingAddress->getCountryCode()) {
             $request["billingAddress"]["state"] =  $billingAddress->getProvinceCode();
         }
