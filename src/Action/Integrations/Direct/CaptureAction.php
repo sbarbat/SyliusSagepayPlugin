@@ -46,8 +46,11 @@ class CaptureAction extends DirectApiAwareAction implements ActionInterface, Api
         $getHttpRequest = new GetHttpRequest();
         $this->gateway->execute($getHttpRequest);
 
-        if ($getHttpRequest->method == 'POST') {
-            if (isset($getHttpRequest->request['get_merchant_session']) && true == $getHttpRequest->request['get_merchant_session']) {
+        if ('POST' === $getHttpRequest->method) {
+            if (isset($getHttpRequest->request['get_merchant_session']) && (
+                "true" === $getHttpRequest->request['get_merchant_session']
+                || true === $getHttpRequest->request['get_merchant_session']
+            )) {
                 throw new HttpResponse($this->api->getMerchantSessionKey());
             }
             

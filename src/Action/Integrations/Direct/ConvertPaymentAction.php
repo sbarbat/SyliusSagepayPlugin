@@ -56,7 +56,7 @@ class ConvertPaymentAction extends DirectApiAwareAction implements ActionInterfa
         $details['customerId'] = $order->getCustomer()->getId();
         $details['customerLocale'] = $order->getLocaleCode();
         $details['countryCode'] = null !== $order->getShippingAddress() ? $order->getShippingAddress()->getCountryCode() : null;
-        $details['currencyCode'] = $order->getCurrencyCode();
+        $details['currencyCode'] = $payment->getCurrencyCode();
         
         $request->setResult((array) $details);
     }

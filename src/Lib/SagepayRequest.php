@@ -94,7 +94,7 @@ class SagepayRequest
 
     public function addQuery($key, $value): void
     {
-        if(!in_array($key, $this->querySupportedValues)) {
+        if (!in_array($key, $this->querySupportedValues)) {
             throw new SagepayApiException('Value ['.$key.'] not supported');
         }
 
@@ -121,18 +121,20 @@ class SagepayRequest
 
     protected function validateQuery(): void
     {
-        if($this->query['BillingCountry'] == 'US') {
+        if ("US" === $this->query['BillingCountry']) {
             $this->queryMandatoryValues[] = 'BillingState';
         }
 
         foreach($this->queryMandatoryValues as $key) {
-            if(!isset($this->query[$key]) || isset($this->query[$key]) && !$this->validateField($this->query[$key]))
+            if (!isset($this->query[$key]) || isset($this->query[$key]) && !$this->validateField($this->query[$key])) {
                 throw new SagepayApiException($key . ' must be in the query');
+            }
         }
 
         foreach($this->query as $key => $value) {
-            if($value == null) 
+            if (null == $value) {
                 unset($this->query[$key]);
+            }
         }
     }
 
@@ -146,7 +148,7 @@ class SagepayRequest
         $this->addQuery($prefix . 'Surname', $address->getLastName());
         $this->addQuery($prefix . 'Firstnames', $address->getFirstName());
 
-        if($address->getCompany() == null) {
+        if (null == $address->getCompany()) {
             $this->addQuery($prefix . 'Address1', $address->getStreet());
         } else {
             $this->addQuery($prefix . 'Address1', $address->getCompany());
@@ -156,7 +158,7 @@ class SagepayRequest
         $this->addQuery($prefix . 'City', $address->getCity());
         $this->addQuery($prefix . 'State', $address->getProvinceCode());
         $this->addQuery($prefix . 'PostCode', $address->getPostcode());
-        $this->addQuery($prefix . 'Country', 'GB');// $address->getCountryCode());
+        $this->addQuery($prefix . 'Country', $address->getCountryCode());
         $this->addQuery($prefix . 'Phone', $address->getPhoneNumber());
     }
 

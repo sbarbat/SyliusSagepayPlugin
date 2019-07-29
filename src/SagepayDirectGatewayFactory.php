@@ -35,11 +35,10 @@ class SagepayDirectGatewayFactory extends GatewayFactory
             'payum.action.convert' => new ConvertPaymentAction(),
         ]);
 
-        if (false == $config['payum.api']) {
+        if (null === $config['payum.api'] || false === $config['payum.api']) {
             $config['payum.default_options'] = array(
                 'integration' => SagepayIntegrations::DIRECT,
                 'sandbox' => true,
-                'currency' => 'GBP',
                 'vendorName' => 'winebuyers',
                 'integrationKeyLive' => '',
                 'integrationPasswordLive' => '',
@@ -52,8 +51,7 @@ class SagepayDirectGatewayFactory extends GatewayFactory
                 'integrationKeyLive',
                 'integrationPasswordLive',
                 'integrationKeyTest',
-                'integrationPasswordTest',
-                'currency'
+                'integrationPasswordTest'
             ];
 
             $config['payum.api'] = function (ArrayObject $config) {

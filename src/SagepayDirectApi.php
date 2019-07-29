@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
 use Http\Message\MessageFactory;
-use Payum\Core\Exception\Http\HttpException;
+
 use Payum\Core\HttpClientInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\RenderTemplate;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
-use Sylius\Component\Core\Model\PaymentInterface;
+use Payum\Core\Exception\Http\HttpException;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
+use Sylius\Component\Core\Model\PaymentInterface;
+
+use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
+use Sbarbat\SyliusSagepayPlugin\Sanitizers\NameSanitizer;
+use Sbarbat\SyliusSagepayPlugin\Sanitizers\SanitizerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SagepayDirectApi extends SagepayApi
 {
@@ -120,7 +122,7 @@ class SagepayDirectApi extends SagepayApi
 
     public function is3DAuthResponse($httpRequest): bool
     {
-        return isset($httpRequest) && 'POST' == $httpRequest->method && isset($httpRequest->request['PaRes']);
+        return isset($httpRequest) && 'POST' === $httpRequest->method && isset($httpRequest->request['PaRes']);
     }
 
     public function getBasicAuthenticationHeader()
