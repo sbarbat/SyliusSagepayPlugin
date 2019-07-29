@@ -72,7 +72,7 @@ abstract class SagepayApi
      */
     public function getApiEndpoint()
     {
-        return $this->options['sandbox'] ? 'https://pi-test.sagepay.com/api/v1/' : 'https://pi-live.sagepay.com/api/v1/';    
+        return $this->options['sandbox'] ? 'https://pi-test.sagepay.com/api/v1/' : 'https://pi-live.sagepay.com/api/v1/';
     }
 
     /**

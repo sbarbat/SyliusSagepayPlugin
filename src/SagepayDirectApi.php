@@ -68,9 +68,10 @@ class SagepayDirectApi extends SagepayApi
  
         curl_close($curl);
 
-       if(isset($response->code)) {
-           throw new NotFoundHttpException(sprintf('Error getting merchant session key: %s', json_encode($response)));
-       }
+        if (isset($response->code)) {
+            throw new NotFoundHttpException(sprintf('Error getting merchant session key: %s', json_encode($response)));
+        }
+
         return json_encode($response);
     }
 
@@ -140,6 +141,4 @@ class SagepayDirectApi extends SagepayApi
     {
         return $this->options['sandbox'] ? $this->options['integrationPasswordTest'] : $this->options['integrationPasswordLive'];
     }
-    
-
 }

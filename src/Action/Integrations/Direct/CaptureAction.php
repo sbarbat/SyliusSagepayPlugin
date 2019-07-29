@@ -47,13 +47,13 @@ class CaptureAction extends DirectApiAwareAction implements ActionInterface, Api
         $this->gateway->execute($getHttpRequest);
 
         if ($getHttpRequest->method == 'POST') {
-            
-            if(isset($getHttpRequest->request['get_merchant_session']) && true == $getHttpRequest->request['get_merchant_session']) {
+            if (isset($getHttpRequest->request['get_merchant_session']) && true == $getHttpRequest->request['get_merchant_session']) {
                 throw new HttpResponse($this->api->getMerchantSessionKey());
             }
             
             $model['card-identifier'] = $getHttpRequest->request['card-identifier'];
             $model['merchant-session-key'] = $getHttpRequest->request['merchant-session-key'];
+
             return;
         }
         
@@ -66,8 +66,8 @@ class CaptureAction extends DirectApiAwareAction implements ActionInterface, Api
             'token' => $request->getToken(),
             'actionUrl' => $request->getToken() ? $request->getToken()->getTargetUrl() : null,
         )));
-        throw new HttpResponse($renderTemplate->getResult());
 
+        throw new HttpResponse($renderTemplate->getResult());
     }
 
     /**
@@ -81,5 +81,4 @@ class CaptureAction extends DirectApiAwareAction implements ActionInterface, Api
             $request->getFirstModel() instanceof PaymentInterface
         ;
     }
-
 }

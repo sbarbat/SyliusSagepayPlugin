@@ -52,14 +52,14 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
         $order = $payment->getOrder();
 
         $billingAddress = $order->getBillingAddress();
-        if($billingAddress->getCompany() != null) {
+        if ($billingAddress->getCompany() != null) {
             $billingStreet = $billingAddress->getCompany() . ' ' . $billingAddress->getStreet();
         } else {
             $billingStreet = $billingAddress->getStreet();
         }
 
         $shippingAddress = $order->getShippingAddress();
-        if($shippingAddress->getCompany() != null) {
+        if ($shippingAddress->getCompany() != null) {
             $shippingStreet = $shippingAddress->getCompany() . ' ' . $shippingAddress->getStreet();
         } else {
             $shippingStreet = $shippingAddress->getStreet();
@@ -81,8 +81,8 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
             "currency" => $this->api->getOption('currency'),
             "description" => $description,
             "apply3DSecure" => "UseMSPSetting",
-            "customerFirstName" => ( (!empty($order->getCustomer()->getFirstname())) ? $order->getCustomer()->getFirstname() : $billingAddress->getFirstName() ),
-            "customerLastName" => ( (!empty($order->getCustomer()->getLastname())) ? $order->getCustomer()->getLastname() : $billingAddress->getLastName() ),
+            "customerFirstName" => ((!empty($order->getCustomer()->getFirstname())) ? $order->getCustomer()->getFirstname() : $billingAddress->getFirstName()),
+            "customerLastName" => ((!empty($order->getCustomer()->getLastname())) ? $order->getCustomer()->getLastname() : $billingAddress->getLastName()),
             "billingAddress" => [
                 "address1" => $billingStreet,
                 "city" => $billingAddress->getCity(),
@@ -99,11 +99,11 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
             ]
         ];
           
-        if('US' == $shippingAddress->getCountryCode()) {
+        if ('US' == $shippingAddress->getCountryCode()) {
             $request["shippingDetails"]["shippingState"] =  $shippingAddress->getProvinceCode();
         }
           
-        if('US' == $billingAddress->getCountryCode()) {
+        if ('US' == $billingAddress->getCountryCode()) {
             $request["billingAddress"]["state"] =  $billingAddress->getProvinceCode();
         }
  

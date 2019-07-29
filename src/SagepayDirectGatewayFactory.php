@@ -44,15 +44,15 @@ class SagepayDirectGatewayFactory extends GatewayFactory
                 'integrationKeyLive' => '',
                 'integrationPasswordLive' => '',
                 'integrationKeyTest' => '',
-                'integrationPasswordTest' => '', 
+                'integrationPasswordTest' => '',
             );
             $config->defaults($config['payum.default_options']);
-            $config['payum.required_options'] = [ 
-                'vendorName', 
-                'integrationKeyLive', 
-                'integrationPasswordLive', 
-                'integrationKeyTest', 
-                'integrationPasswordTest', 
+            $config['payum.required_options'] = [
+                'vendorName',
+                'integrationKeyLive',
+                'integrationPasswordLive',
+                'integrationKeyTest',
+                'integrationPasswordTest',
                 'currency'
             ];
 

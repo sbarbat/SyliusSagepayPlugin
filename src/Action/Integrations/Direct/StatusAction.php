@@ -58,10 +58,10 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
 
         $this->gateway->execute($httpRequest = new GetHttpRequest());
         
-        if($this->api->is3DAuthResponse($httpRequest)) {
+        if ($this->api->is3DAuthResponse($httpRequest)) {
             /**
              * If is the return of the 3D Authentication
-             */ 
+             */
 
             // Get the paRes from the response
             $paRes = $httpRequest->request['PaRes'];
@@ -73,20 +73,21 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
 
             $outcome = $this->api->getTransactionOutcome($transactionId);
 
-            if(isset($outcome->status) && SagepayStatusType::OK == strtoupper($outcome->status)) {
+            if (isset($outcome->status) && SagepayStatusType::OK == strtoupper($outcome->status)) {
                 $this->resolvePaymentStatus($request, $outcome);
             } else {
                 $request->markFailed();
             }
-        } else if(!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
+        } elseif (!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
             /**
              * See if need to redirect for 3DAuth
              */
             $this->get3DAuthRedirect($request, $model['payment_response'], $payment);
         
             $this->resolvePaymentStatus($request, json_decode($model['payment_response']));
+
             return;
-        } else if(!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
+        } elseif (!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
             $this->gateway->addAction(new ExecutePaymentAction());
             $executePaymentRequest = new ExecutePayment($payment);
             $executePaymentRequest->setModel($model);
@@ -96,7 +97,7 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
             $request->markNew();
         }
 
-        if(null != $details) {
+        if (null != $details) {
             $payment->setDetails($details);
         }
     }
@@ -107,8 +108,9 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
      */
     private function resolvePaymentStatus(GetStatusInterface $request, $response): void
     {
-        if(!isset($response->status)) {
+        if (!isset($response->status)) {
             $request->markCanceled();
+
             return;
         }
 
@@ -156,7 +158,7 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
     {
         $response = json_decode($response);
         
-        if(isset($response->status) && SagepayStatusType::_3DAUTH == strtoupper($response->status)) {
+        if (isset($response->status) && SagepayStatusType::_3DAUTH == strtoupper($response->status)) {
             /** @var GatewayConfigInterface $gatewayConfig */
             $gatewayConfig = $payment->getMethod()->getGatewayConfig();
 
@@ -185,4 +187,3 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
         return json_decode($payment->getDetails()['payment_response'])->transactionId;
     }
 }
-

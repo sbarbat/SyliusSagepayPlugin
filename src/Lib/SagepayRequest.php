@@ -92,7 +92,7 @@ class SagepayRequest
         $this->addQuery('Currency', $this->api->getOption('currency'));
     }
 
-    public function addQuery($key, $value)
+    public function addQuery($key, $value): void
     {
         if(!in_array($key, $this->querySupportedValues)) {
             throw new SagepayApiException('Value ['.$key.'] not supported');
@@ -101,12 +101,12 @@ class SagepayRequest
         $this->query[$key] = $value;
     }
 
-    public function setBillingAddress(AddressInterface $address)
+    public function setBillingAddress(AddressInterface $address): void
     {
         $this->setAddress('Billing', $address);
     }
 
-    public function setShippingAddress(AddressInterface $address)
+    public function setShippingAddress(AddressInterface $address): void
     {
         $this->setAddress('Delivery', $address);
     }
@@ -119,7 +119,7 @@ class SagepayRequest
         return $this->request;
     }
 
-    protected function validateQuery()
+    protected function validateQuery(): void
     {
         if($this->query['BillingCountry'] == 'US') {
             $this->queryMandatoryValues[] = 'BillingState';
@@ -136,12 +136,12 @@ class SagepayRequest
         }
     }
 
-    protected function validateField($value)
+    protected function validateField($value): bool
     {
         return $value != null;
     }
 
-    protected function setAddress($prefix, AddressInterface $address)
+    protected function setAddress($prefix, AddressInterface $address): void
     {
         $this->addQuery($prefix . 'Surname', $address->getLastName());
         $this->addQuery($prefix . 'Firstnames', $address->getFirstName());

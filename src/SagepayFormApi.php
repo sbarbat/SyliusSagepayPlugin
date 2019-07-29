@@ -14,9 +14,8 @@ use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 
-class SagepayFormApi extends SagepayApi
+class SagepayFormApi extends SagepayApi 
 {
-
     /**
      * @param  array $params
      *
@@ -43,7 +42,7 @@ class SagepayFormApi extends SagepayApi
         return $request;
     }
 
-    public function getFormEncryptionPassword()
+    public function getFormEncryptionPassword() 
     {
         return $this->options['sandbox'] ? $this->options['encryptionPasswordTest'] : $this->options['encryptionPasswordLive'];
     }
