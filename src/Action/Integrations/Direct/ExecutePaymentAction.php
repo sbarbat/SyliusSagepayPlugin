@@ -4,38 +4,51 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct;
 
-use Payum\Core\Action\ActionInterface;
-use Payum\Core\Request\GetStatusInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
-use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\ApiAwareInterface;
 use Payum\Core\ApiAwareTrait;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Convert;
 use Payum\Core\Request\Capture;
-use Payum\Core\Request\GetHttpRequest;
-use Payum\Core\Reply\HttpPostRedirect;
+use Payum\Core\Request\Convert;
+use Payum\Core\ApiAwareInterface;
+use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpRedirect;
-use Payum\Core\Security\GenericTokenFactoryAwareInterface;
-use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-
-use Sylius\Component\Core\Model\PaymentInterface;
-
+use Payum\Core\GatewayAwareInterface;
+use Payum\Core\Action\ActionInterface;
+use Payum\Core\Bridge\Spl\ArrayObject;
+use Payum\Core\Reply\HttpPostRedirect;
+use Payum\Core\Request\GetHttpRequest;
+use Payum\Core\Request\GetStatusInterface;
 use Sbarbat\SyliusSagepayPlugin\SagepayDirectApi;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayResponse;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
 
-use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
+use Payum\Core\Exception\RequestNotSupportedException;
+
+use Payum\Core\Security\GenericTokenFactoryAwareTrait;
+use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
+use Sbarbat\SyliusSagepayPlugin\Sanitizers\NameSanitizer;
+
+use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
+use Sbarbat\SyliusSagepayPlugin\Sanitizers\AddressSanitizer;
+use Sbarbat\SyliusSagepayPlugin\Sanitizers\SanitizerInterface;
+use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
 
 final class ExecutePaymentAction extends DirectApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
+    const US_CODE = "US";
+
+    /** @var SanitizerInterface */
+    private $nameSanitizer;
+
+    /** @var SanitizerInterface */
+    private $addressSanitizer;
+
     public function __construct()
     {
         $this->apiClass = SagepayDirectApi::class;
+        $this->nameSanitizer = new NameSanitizer();
+        $this->addressSanitizer = new AddressSanitizer();
     }
 
     /**
@@ -78,32 +91,32 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
             ],
             "vendorTxCode" => $model['vendorTxCode'],
             "amount" => $model['amount'],
-            "currency" => $this->api->getOption('currency'),
+            "currency" => $payment->getCurrencyCode(),
             "description" => $description,
             "apply3DSecure" => "UseMSPSetting",
-            "customerFirstName" => ((!empty($order->getCustomer()->getFirstname())) ? $order->getCustomer()->getFirstname() : $billingAddress->getFirstName()),
-            "customerLastName" => ((!empty($order->getCustomer()->getLastname())) ? $order->getCustomer()->getLastname() : $billingAddress->getLastName()),
+            "customerFirstName" => $this->nameSanitizer->sanitize(((!empty($order->getCustomer()->getFirstname())) ? $order->getCustomer()->getFirstname() : $billingAddress->getFirstName())),
+            "customerLastName" => $this->nameSanitizer->sanitize(((!empty($order->getCustomer()->getLastname())) ? $order->getCustomer()->getLastname() : $billingAddress->getLastName())),
             "billingAddress" => [
-                "address1" => $billingStreet,
+                "address1" => $this->addressSanitizer->sanitize($billingStreet),
                 "city" => $billingAddress->getCity(),
                 "postalCode" => $billingAddress->getPostcode(),
                 "country" => $billingAddress->getCountryCode(),
             ],
             "shippingDetails" => [
-                "recipientFirstName" => $shippingAddress->getFirstName(),
-                "recipientLastName" => $shippingAddress->getLastName(),
-                "shippingAddress1" => $shippingStreet,
+                "recipientFirstName" => $this->nameSanitizer->sanitize($shippingAddress->getFirstName()),
+                "recipientLastName" => $this->nameSanitizer->sanitize($shippingAddress->getLastName()),
+                "shippingAddress1" => $this->addressSanitizer->sanitize($shippingStreet),
                 "shippingCity" => $shippingAddress->getCity(),
                 "shippingPostalCode" => $shippingAddress->getPostcode(),
                 "shippingCountry" => $shippingAddress->getCountryCode(),
             ]
         ];
           
-        if ('US' == $shippingAddress->getCountryCode()) {
+        if (static::US_CODE === $shippingAddress->getCountryCode()) {
             $request["shippingDetails"]["shippingState"] =  $shippingAddress->getProvinceCode();
         }
           
-        if ('US' == $billingAddress->getCountryCode()) {
+        if (static::US_CODE === $billingAddress->getCountryCode()) {
             $request["billingAddress"]["state"] =  $billingAddress->getProvinceCode();
         }
  
@@ -141,4 +154,6 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
             $request->getModel() instanceof \ArrayAccess
         ;
     }
+
+    
 }
