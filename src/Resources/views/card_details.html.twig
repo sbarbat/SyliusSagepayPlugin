@@ -46,22 +46,22 @@
         <form class="ui loadable form" method="POST" action="{{ actionUrl }}">
             <div class="fields">
                 <div class="sixteen wide field">
-                    <label>Name</label>
-                    <input type="text" data-card-details="cardholder-name" name="name" placeholder="Name on card">
+                    <label for="frmNameCC">Name</label>
+                    <input id="frmNameCC" type="text" data-card-details="cardholder-name" name="name" required autocomplete="cc-name" placeholder="Name on card">
                 </div>
             </div>
             <div class="fields">
                 <div class="seven wide field">
-                    <label>Card Number</label>
-                    <input type="text" data-card-details="card-number" name="number" maxlength="20" placeholder="Card #">
+                    <label for="frmCCNum">Card Number</label>
+                    <input id="frmCCNum" type="number" data-card-details="card-number" name="number" required autocomplete="cc-number" maxlength="20" placeholder="Card #">
                 </div>
                 <div class="three wide field">
-                    <label>CVC</label>
-                    <input type="text" data-card-details="security-code" name="cvc" maxlength="4" placeholder="CVC">
+                    <label for="frmCCCVC">CVC</label>
+                    <input id="frmCCCVC" type="number" data-card-details="security-code" required autocomplete="cc-csc" name="cvc" maxlength="4" placeholder="CVC">
                 </div>
                 <div class="six wide field">
-                    <label>Expiration</label>
-                    <input type="text" data-card-details="expiry-date" name="expiry" maxlength="7" placeholder="Expiry">
+                    <label for="frmCCExp">Expiration</label>
+                    <input id="frmCCExp" type="text" data-card-details="expiry-date" name="expiry" maxlength="7" required autocomplete="cc-exp" placeholder="Expiry">
                 </div>
             </div>
 
