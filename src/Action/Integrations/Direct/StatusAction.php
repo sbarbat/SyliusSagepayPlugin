@@ -92,7 +92,13 @@ class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiA
             $executePaymentRequest = new ExecutePayment($payment);
             $executePaymentRequest->setModel($model);
             $this->gateway->execute($executePaymentRequest);
-            $request->markNew();
+            
+            $response = json_decode($model["payment_response"]);
+            if (isset($response->errors)) {
+                $request->markFailed();
+            } else {
+                $request->markNew();
+            }
         } else {
             $request->markNew();
         }
