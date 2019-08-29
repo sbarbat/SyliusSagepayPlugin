@@ -94,8 +94,8 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
             "currency" => $payment->getCurrencyCode(),
             "description" => $description,
             "apply3DSecure" => "UseMSPSetting",
-            "customerFirstName" => $this->nameSanitizer->sanitize(((!empty($order->getCustomer()->getFirstname())) ? $order->getCustomer()->getFirstname() : $billingAddress->getFirstName())),
-            "customerLastName" => $this->nameSanitizer->sanitize(((!empty($order->getCustomer()->getLastname())) ? $order->getCustomer()->getLastname() : $billingAddress->getLastName())),
+            "customerFirstName" => $this->nameSanitizer->sanitize($billingAddress->getFirstName()),
+            "customerLastName" => $this->nameSanitizer->sanitize($billingAddress->getLastName()),
             "billingAddress" => [
                 "address1" => $this->addressSanitizer->sanitize($billingStreet),
                 "city" => $billingAddress->getCity(),
