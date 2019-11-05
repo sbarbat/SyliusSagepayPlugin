@@ -2,7 +2,7 @@
 
 This plugins provides integration for Direct and Form Sagepays integrations. It supports 3D Secure.
 
-The Direct integration is been using at least on one production website with over 10,000 transactions.
+The Direct integration is been used at least on one production website with over 10,000 transactions.
 
 ## Installation
 
