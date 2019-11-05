@@ -1,6 +1,4 @@
 sbarbat_sylius_sagepay_plugin:
-    mode:
-        not_blank: Select Sagepay mode
     vendor_name:
         not_blank: Vendor name cannot be blank.
     encryptation_password_test:
