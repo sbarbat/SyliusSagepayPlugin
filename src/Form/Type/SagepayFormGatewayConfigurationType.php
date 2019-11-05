@@ -26,12 +26,6 @@ final class SagepayFormGatewayConfigurationType extends AbstractType
                     'sbarbat_sylius_sagepay_plugin.ui.live' => false,
                 ],
                 'label' => 'sbarbat_sylius_sagepay_plugin.ui.mode',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'sbarbat_sylius_sagepay_plugin.mode.not_blank',
-                        'groups' => ['sylius'],
-                    ])
-                ],
             ])
             ->add('vendorName', TextType::class, [
                 'label' => 'sbarbat_sylius_sagepay_plugin.ui.vendor_name',
