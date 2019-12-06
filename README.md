@@ -1,8 +1,11 @@
 ## Overview
 
-This plugins provides integration for Direct and Form Sagepays integrations. It supports 3D Secure.
+This plugins provides integration for Direct (server) Sagepay integrations. It supports 3D Secure.
 
-The Direct integration is been used at least on one production website with over 10,000 successfully processed transactions.
+This plugin is been used at least on one production website with over 10,000 successfully processed transactions.
+
+
+![Sylius sagepay integration](https://github.com/sbarbat/SyliusSagepayPlugin/tree/master/img/sylius-sagepay-integration.png)
 
 ## Installation
 
@@ -39,4 +42,4 @@ public function registerBundles()
 
 ## Support
 
-Do you want us to customize this plugin for your specific needs? Write us an email on barbatsan@gmail.com :computer:
+Do you want us to customize this plugin for your specific needs? Write us an email on barbatsan@gmail.com
