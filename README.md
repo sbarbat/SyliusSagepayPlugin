@@ -5,7 +5,7 @@ This plugins provides integration for Direct (server) Sagepay integrations. It s
 This plugin is been used at least on one production website with over 10,000 successfully processed transactions.
 
 
-![Sylius sagepay integration](https://github.com/sbarbat/SyliusSagepayPlugin/tree/master/img/sylius-sagepay-integration.png)
+![Sylius sagepay integration](https://raw.githubusercontent.com/sbarbat/SyliusSagepayPlugin/master/img/sylius-sagepay-integration.png)
 
 ## Installation
 
