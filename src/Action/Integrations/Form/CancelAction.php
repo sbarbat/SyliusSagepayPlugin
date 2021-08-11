@@ -12,8 +12,6 @@ use Payum\Core\Request\Cancel;
 class CancelAction implements ActionInterface
 {
     /**
-     * {@inheritDoc}
-     *
      * @param Cancel $request
      */
     public function execute($request)
@@ -25,13 +23,9 @@ class CancelAction implements ActionInterface
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supports($request)
     {
-        return
-            $request instanceof Cancel &&
+        return $request instanceof Cancel &&
             $request->getModel() instanceof \ArrayAccess
         ;
     }

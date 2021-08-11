@@ -9,14 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
-
 
 final class SagepayDirectGatewayConfigurationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -33,7 +28,7 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.vendor_name.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('integrationKeyLive', TextType::class, [
@@ -42,7 +37,7 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.integration_key_live.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('integrationPasswordLive', TextType::class, [
@@ -51,7 +46,7 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.integration_password_live.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('integrationKeyTest', TextType::class, [
@@ -60,7 +55,7 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.integration_key_test.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('integrationPasswordTest', TextType::class, [
@@ -69,7 +64,7 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.integration_password_test.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('stateCodeAbbreviated', ChoiceType::class, [

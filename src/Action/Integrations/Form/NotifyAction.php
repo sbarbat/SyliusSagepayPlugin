@@ -15,8 +15,6 @@ class NotifyAction implements ActionInterface
     use GatewayAwareTrait;
 
     /**
-     * {@inheritDoc}
-     *
      * @param Notify $request
      */
     public function execute($request)
@@ -28,9 +26,6 @@ class NotifyAction implements ActionInterface
         throw new \LogicException('Not implemented');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supports($request)
     {
         return

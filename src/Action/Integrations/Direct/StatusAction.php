@@ -4,25 +4,23 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct;
 
-use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Reply\HttpPostRedirect;
+use Payum\Core\Request\GetHttpRequest;
+use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-use Sylius\Component\Core\Model\PaymentInterface;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
 use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
+use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
 use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAwareInterface
 {
     use GenericTokenFactoryAwareTrait;
 
     /**
-     * {@inheritDoc}
-     *
      * @param GetStatusInterface $request
      */
     public function execute($request)
@@ -35,10 +33,10 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
         $details = $payment->getDetails();
 
         $this->gateway->execute($httpRequest = new GetHttpRequest());
-        
+
         if ($this->api->is3DAuthResponse($httpRequest)) {
             /**
-             * If is the return of the 3D Authentication
+             * If is the return of the 3D Authentication.
              */
 
             // Get the paRes from the response
@@ -51,27 +49,29 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
 
             $outcome = $this->api->getTransactionOutcome($transactionId);
 
-            if (isset($outcome->status) && SagepayStatusType::OK == strtoupper($outcome->status)) {
+            if (isset($outcome->status) && SagepayStatusType::OK === strtoupper($outcome->status)) {
                 $this->resolvePaymentStatus($request, $outcome);
             } else {
                 $request->markFailed();
             }
-        } elseif (!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
-            /**
-             * See if need to redirect for 3DAuth
-             */
+        } elseif (! $this->api->is3DAuthResponse(
+            $httpRequest
+        ) && ($request->isNew() || $request->isUnknown()) && isset($model['payment_response'])) {
+            // See if need to redirect for 3DAuth
             $this->get3DAuthRedirect($request, $model['payment_response'], $payment);
-        
+
             $this->resolvePaymentStatus($request, json_decode($model['payment_response']));
 
             return;
-        } elseif (!$this->api->is3DAuthResponse($httpRequest) && ($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
+        } elseif (! $this->api->is3DAuthResponse(
+            $httpRequest
+        ) && ($request->isNew() || $request->isUnknown()) && isset($model['card-identifier'])) {
             $this->gateway->addAction(new ExecutePaymentAction());
             $executePaymentRequest = new ExecutePayment($payment);
             $executePaymentRequest->setModel($model);
             $this->gateway->execute($executePaymentRequest);
-            
-            $response = json_decode($model["payment_response"]);
+
+            $response = json_decode($model['payment_response']);
             if (isset($response->errors)) {
                 $request->markFailed();
             } else {
@@ -81,18 +81,21 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
             $request->markNew();
         }
 
-        if (null != $details) {
+        if (null !== $details) {
             $payment->setDetails($details);
         }
     }
 
-    /**
-     * @param string $authResult
-     * @param GetStatusInterface $request
-     */
+    public function supports($request)
+    {
+        return $request instanceof GetStatusInterface &&
+            $request->getFirstModel() instanceof PaymentInterface
+        ;
+    }
+
     private function resolvePaymentStatus(GetStatusInterface $request, $response): void
     {
-        if (!isset($response->status)) {
+        if (! isset($response->status)) {
             $request->markCanceled();
 
             return;
@@ -101,12 +104,15 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
         switch (strtoupper($response->status)) {
             case null:
                 $request->markNew();
+
                 break;
             case SagepayStatusType::OK:
                 $request->markCaptured();
+
                 break;
             case SagepayStatusType::ABORT:
                 $request->markCanceled();
+
                 break;
             case SagepayStatusType::NOTAUTHED:
             case SagepayStatusType::REJECTED:
@@ -114,6 +120,7 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
             case SagepayStatusType::MALFORMED:
             case SagepayStatusType::INVALID:
                 $request->markFailed();
+
                 break;
             // case SagepayStatusType::CANCEL:
             //     $request->markSuspended();
@@ -123,28 +130,20 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
             //     break;
             default:
                 $request->markUnknown();
+
                 break;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function supports($request)
-    {
-        return
-            $request instanceof GetStatusInterface &&
-            $request->getFirstModel() instanceof PaymentInterface
-        ;
     }
 
     private function get3DAuthRedirect(GetStatusInterface $request, $response, $payment)
     {
         $response = json_decode($response);
-        
-        if (isset($response->status) && SagepayStatusType::_3DAUTH == strtoupper($response->status)) {
+
+        if (isset($response->status) && SagepayStatusType::_3DAUTH === strtoupper($response->status)) {
             /** @var GatewayConfigInterface $gatewayConfig */
-            $gatewayConfig = $payment->getMethod()->getGatewayConfig();
+            $gatewayConfig = $payment->getMethod()
+                ->getGatewayConfig()
+            ;
 
             $token = $this->tokenFactory->createToken(
                 $gatewayConfig->getGatewayName(),
@@ -155,15 +154,16 @@ class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAw
             throw new HttpPostRedirect($response->acsUrl, [
                 'PaReq' => $response->paReq,
                 'TermUrl' => $token->getTargetUrl(),
-                'MD' => $payment->getId()
+                'MD' => $payment->getId(),
             ]);
         }
     }
 
     /**
-     * Gets the transaction id from the 3D Auth response
+     * Gets the transaction id from the 3D Auth response.
      *
      * @param PaymentInterface $payment
+     *
      * @return int
      */
     private function getTransactionId($payment)

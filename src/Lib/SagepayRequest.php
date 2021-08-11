@@ -10,7 +10,9 @@ use Sylius\Component\Core\Model\AddressInterface;
 class SagepayRequest
 {
     protected $api;
+
     protected $query = [];
+
     protected $request = [];
 
     protected $queryMandatoryValues = [
@@ -63,12 +65,10 @@ class SagepayRequest
         'DeliveryPhone',
         'CustomerName',
         'CustomerEMail',
-        'Profile'
+        'Profile',
     ];
 
     /**
-     * @param array               $options
-     *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
     public function __construct(SagepayFormApi $api)
@@ -82,7 +82,7 @@ class SagepayRequest
 
     public function addQuery($key, $value): void
     {
-        if (!in_array($key, $this->querySupportedValues)) {
+        if (! in_array($key, $this->querySupportedValues, true)) {
             throw new SagepayApiException('Value ['.$key.'] not supported');
         }
 
@@ -102,24 +102,26 @@ class SagepayRequest
     public function getRequest()
     {
         $this->validateQuery();
-        $this->request['Crypt'] = SagepayUtil::encrypt($this->query, $this->api->getFormEncryptionPassword()); 
+        $this->request['Crypt'] = SagepayUtil::encrypt($this->query, $this->api->getFormEncryptionPassword());
 
         return $this->request;
     }
 
     protected function validateQuery(): void
     {
-        if ("US" === $this->query['BillingCountry']) {
+        if ('US' === $this->query['BillingCountry']) {
             $this->queryMandatoryValues[] = 'BillingState';
         }
 
-        foreach($this->queryMandatoryValues as $key) {
-            if (!isset($this->query[$key]) || (isset($this->query[$key]) && !$this->validateField($this->query[$key]))) {
-                throw new SagepayApiException($key . ' must be in the query');
+        foreach ($this->queryMandatoryValues as $key) {
+            if (! isset($this->query[$key]) || (isset($this->query[$key]) && ! $this->validateField(
+                $this->query[$key]
+            ))) {
+                throw new SagepayApiException($key.' must be in the query');
             }
         }
 
-        foreach($this->query as $key => $value) {
+        foreach ($this->query as $key => $value) {
             if (null === $value) {
                 unset($this->query[$key]);
             }
@@ -128,28 +130,27 @@ class SagepayRequest
 
     protected function validateField($value): bool
     {
-        return $value !== null;
+        return null !== $value;
     }
 
     protected function setAddress($prefix, AddressInterface $address): void
     {
-        $this->addQuery($prefix . 'Surname', $address->getLastName());
-        $this->addQuery($prefix . 'Firstnames', $address->getFirstName());
+        $this->addQuery($prefix.'Surname', $address->getLastName());
+        $this->addQuery($prefix.'Firstnames', $address->getFirstName());
 
         if (null === $address->getCompany()) {
-            $this->addQuery($prefix . 'Address1', $address->getStreet());
+            $this->addQuery($prefix.'Address1', $address->getStreet());
         } else {
-            $this->addQuery($prefix . 'Address1', $address->getCompany());
-            $this->addQuery($prefix . 'Address2', $address->getStreet());
+            $this->addQuery($prefix.'Address1', $address->getCompany());
+            $this->addQuery($prefix.'Address2', $address->getStreet());
         }
 
-        $this->addQuery($prefix . 'City', $address->getCity());
-        if ('US' === $address->getCountryCode()){
-            $this->addQuery($prefix . 'State',  $this->api->getStateCode($address));
+        $this->addQuery($prefix.'City', $address->getCity());
+        if ('US' === $address->getCountryCode()) {
+            $this->addQuery($prefix.'State', $this->api->getStateCode($address));
         }
-        $this->addQuery($prefix . 'PostCode', $address->getPostcode());
-        $this->addQuery($prefix . 'Country', $address->getCountryCode());
-        $this->addQuery($prefix . 'Phone', $address->getPhoneNumber());
+        $this->addQuery($prefix.'PostCode', $address->getPostcode());
+        $this->addQuery($prefix.'Country', $address->getCountryCode());
+        $this->addQuery($prefix.'Phone', $address->getPhoneNumber());
     }
-
 }
