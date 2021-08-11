@@ -31,23 +31,17 @@ abstract class SagepayApi
     protected $options = [];
 
     /**
-     * @var ProvinceNamingProviderInterface
-     */
-    protected $provinceNamingProvider;
-
-    /**
      * @param array               $options
      * @param HttpClientInterface $client
      * @param MessageFactory      $messageFactory
      *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
-    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory, ProvinceNamingProviderInterface $provinceNamingProvider)
+    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory)
     {
         $this->options = $options;
         $this->client = $client;
         $this->messageFactory = $messageFactory;
-        $this->provinceNamingProvider = $provinceNamingProvider;
     }
 
     /**
@@ -102,10 +96,5 @@ abstract class SagepayApi
     public function getTransactionCode(OrderInterface $order, PaymentInterface $payment)
     {
         return $order->getNumber() . '_' . $payment->getId() . '_' . time();
-    }
-
-    public function getStateCode(AddressInterface $address)
-    {
-        return $this->options['stateCodeAbbreviated'] ? $this->provinceNamingProvider->getAbbreviation($address) : $address->getProvinceCode();
     }
 }

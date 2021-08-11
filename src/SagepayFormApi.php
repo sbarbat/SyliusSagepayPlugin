@@ -6,19 +6,26 @@ namespace Sbarbat\SyliusSagepayPlugin;
 
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
+use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
+use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 class SagepayFormApi extends SagepayApi 
 {
     /**
+     * @var ProvinceNamingProviderInterface
+     */
+    private $provinceNamingProvider;
+
+    /**
      * @param  array $params
      *
      * @return array
      */
-    public function preparePayment($request, ArrayObject $model, PaymentInterface $payment): SagepayRequest
+    public function preparePayment($request, ArrayObject $model, PaymentInterface $payment, ProvinceNamingProviderInterface $provinceNamingProvider): SagepayRequest
     {
+        $this->provinceNamingProvider = $provinceNamingProvider;
         $afterUrl = $request->getToken()->getAfterUrl();
         $order = $payment->getOrder();
         assert($order instanceof OrderInterface);
@@ -44,4 +51,8 @@ class SagepayFormApi extends SagepayApi
         return $this->options['sandbox'] ? $this->options['encryptionPasswordTest'] : $this->options['encryptionPasswordLive'];
     }
 
+    public function getStateCode(AddressInterface $address)
+    {
+        return $this->options['stateCodeAbbreviated'] ? $this->provinceNamingProvider->getAbbreviation($address) : $address->getProvinceCode();
+    }
 }
