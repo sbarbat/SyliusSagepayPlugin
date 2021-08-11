@@ -81,6 +81,14 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     ])
                 ],
             ])
+            ->add('stateCodeAbbreviated', ChoiceType::class, [
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.state_code_abbreviated',
+                'help' => 'sbarbat_sylius_sagepay_plugin.ui.state_code_abbreviated_help',
+                'choices' => [
+                    'sbarbat_sylius_sagepay_plugin.ui.province_abbreviation' => true,
+                    'sbarbat_sylius_sagepay_plugin.ui.province_code' => false,
+                ],
+            ])
         ;
     }
 }

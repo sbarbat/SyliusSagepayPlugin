@@ -40,6 +40,7 @@ class SagepayFormGatewayFactory extends GatewayFactory
                 'protocolVersion' => '3.00',
                 'encryptionPasswordLive' => '',
                 'encryptionPasswordTest' => '',
+                'stateCodeAbbreviated' => false,
             );
             $config->defaults($config['payum.default_options']);
             $config['payum.required_options'] = [ 'vendorName', 'encryptionPasswordLive', 'encryptionPasswordTest', 'currency' ];

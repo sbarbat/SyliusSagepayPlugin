@@ -113,11 +113,11 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
         ];
           
         if (static::US_CODE === $shippingAddress->getCountryCode()) {
-            $request["shippingDetails"]["shippingState"] =  $shippingAddress->getProvinceCode();
+            $request["shippingDetails"]["shippingState"] = $this->api->getOption('stateCodeAbbreviated') ? $shippingAddress->getAbbreviation() : $shippingAddress->getProvinceCode();
         }
           
         if (static::US_CODE === $billingAddress->getCountryCode()) {
-            $request["billingAddress"]["state"] =  $billingAddress->getProvinceCode();
+            $request["billingAddress"]["state"] = $this->api->getOption('stateCodeAbbreviated') ? $billingAddress->getAbbreviation() : $billingAddress->getProvinceCode();
         }
  
         $curl = curl_init();

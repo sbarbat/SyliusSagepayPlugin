@@ -44,6 +44,7 @@ class SagepayDirectGatewayFactory extends GatewayFactory
                 'integrationPasswordLive' => '',
                 'integrationKeyTest' => '',
                 'integrationPasswordTest' => '',
+                'stateCodeAbbreviated' => false,
             );
             $config->defaults($config['payum.default_options']);
             $config['payum.required_options'] = [
