@@ -10,54 +10,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SagepayDirectApi extends SagepayApi
 {
-    /**
-     * @param array $fields
-     *
-     * @return ResponseInterface
-     */
-    protected function doRequest($method, $path, array $fields = [])
-    {
-        $headers = [
-            "Authorization" => $this->getBasicAuthenticationHeader(),
-            "Cache-Control" => 'no-cache',
-            "Content-Type" => "application/json"
-        ];
-
-        $fields = array_merge($fields, [
-            'vendorName' => $this->options['vendorName'],
-        ]);
-
-        $url = $this->getApiEndpoint() . $path;
-        $request = $this->messageFactory->createRequest($method, $url, $headers, http_build_query($fields));
-
-        $response = $this->client->send($request);
-
-        $statusCode = $response->getStatusCode();
-        if (!($statusCode >= 200 && $statusCode < 300)) {
-            throw HttpException::factory($request, $response);
-        }
-
-        return $response;
-    }
-
     public function getMerchantSessionKey()
     {
         $curl = curl_init();
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => $this->getApiEndpoint() . "merchant-session-keys",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => '{ "vendorName": "'.$this->options['vendorName'].'" }',
-        CURLOPT_HTTPHEADER => array(
-            "Authorization: " . $this->getBasicAuthenticationHeader(),
-            "Cache-Control: no-cache",
-            "Content-Type: application/json"
-        ),
-        ));
-        
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->getApiEndpoint().'merchant-session-keys',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{ "vendorName": "'.$this->options['vendorName'].'" }',
+            CURLOPT_HTTPHEADER => [
+                'Authorization: '.$this->getBasicAuthenticationHeader(),
+                'Cache-Control: no-cache',
+                'Content-Type: application/json',
+            ],
+        ]);
+
         $response = json_decode(curl_exec($curl));
         $err = curl_error($curl);
- 
+
         curl_close($curl);
 
         if (isset($response->code)) {
@@ -70,18 +40,18 @@ class SagepayDirectApi extends SagepayApi
     public function validate3DAuthResponse($transactionId, $paRes)
     {
         $curl = curl_init();
- 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->getApiEndpoint()  . "transactions/" . $transactionId . "/3d-secure",
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->getApiEndpoint().'transactions/'.$transactionId.'/3d-secure',
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => '{ "paRes": "' . $paRes . '" }',
-            CURLOPT_HTTPHEADER => array(
-                "Authorization: " . $this->getBasicAuthenticationHeader(),
-                "Cache-Control: no-cache",
-                "Content-Type: application/json"
-            ),
-        ));
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{ "paRes": "'.$paRes.'" }',
+            CURLOPT_HTTPHEADER => [
+                'Authorization: '.$this->getBasicAuthenticationHeader(),
+                'Cache-Control: no-cache',
+                'Content-Type: application/json',
+            ],
+        ]);
 
         $response = curl_exec($curl);
 
@@ -93,18 +63,18 @@ class SagepayDirectApi extends SagepayApi
     public function getTransactionOutcome($transactionId)
     {
         $curl = curl_init();
- 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->getApiEndpoint()  . "transactions/" . $transactionId,
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->getApiEndpoint().'transactions/'.$transactionId,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => array(
-                "Authorization: " . $this->getBasicAuthenticationHeader(),
-                "Cache-Control: no-cache",
-            ),
-        ));
-        
+            CURLOPT_HTTPHEADER => [
+                'Authorization: '.$this->getBasicAuthenticationHeader(),
+                'Cache-Control: no-cache',
+            ],
+        ]);
+
         $response = curl_exec($curl);
-        
+
         curl_close($curl);
 
         return json_decode($response);
@@ -119,7 +89,7 @@ class SagepayDirectApi extends SagepayApi
     {
         $str = 'Basic %s';
 
-        $token = base64_encode($this->getIntegrationKey() .':'. $this->getIntegrationPassword());
+        $token = base64_encode($this->getIntegrationKey().':'.$this->getIntegrationPassword());
 
         return sprintf($str, $token);
     }
@@ -132,5 +102,36 @@ class SagepayDirectApi extends SagepayApi
     public function getIntegrationPassword()
     {
         return $this->options['sandbox'] ? $this->options['integrationPasswordTest'] : $this->options['integrationPasswordLive'];
+    }
+
+    /**
+     * @param mixed $method
+     * @param mixed $path
+     *
+     * @return ResponseInterface
+     */
+    protected function doRequest($method, $path, array $fields = [])
+    {
+        $headers = [
+            'Authorization' => $this->getBasicAuthenticationHeader(),
+            'Cache-Control' => 'no-cache',
+            'Content-Type' => 'application/json',
+        ];
+
+        $fields = array_merge($fields, [
+            'vendorName' => $this->options['vendorName'],
+        ]);
+
+        $url = $this->getApiEndpoint().$path;
+        $request = $this->messageFactory->createRequest($method, $url, $headers, http_build_query($fields));
+
+        $response = $this->client->send($request);
+
+        $statusCode = $response->getStatusCode();
+        if (! ($statusCode >= 200 && $statusCode < 300)) {
+            throw HttpException::factory($request, $response);
+        }
+
+        return $response;
     }
 }
