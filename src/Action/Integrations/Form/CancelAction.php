@@ -7,13 +7,10 @@ namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\Cancel;
 
 class CancelAction implements ActionInterface
 {
-    use GatewayAwareTrait;
-
     /**
      * {@inheritDoc}
      *

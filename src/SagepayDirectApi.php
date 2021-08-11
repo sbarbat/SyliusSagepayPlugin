@@ -4,19 +4,8 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Http\Message\MessageFactory;
-
-use Payum\Core\HttpClientInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
-use Payum\Core\Request\RenderTemplate;
 use Payum\Core\Exception\Http\HttpException;
-use Sylius\Component\Core\Model\OrderInterface;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
-use Sylius\Component\Core\Model\PaymentInterface;
-
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-use Sbarbat\SyliusSagepayPlugin\Sanitizers\NameSanitizer;
-use Sbarbat\SyliusSagepayPlugin\Sanitizers\SanitizerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SagepayDirectApi extends SagepayApi
@@ -24,7 +13,7 @@ class SagepayDirectApi extends SagepayApi
     /**
      * @param array $fields
      *
-     * @return array
+     * @return ResponseInterface
      */
     protected function doRequest($method, $path, array $fields = [])
     {

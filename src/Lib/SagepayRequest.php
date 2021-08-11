@@ -5,16 +5,6 @@ declare(strict_types=1);
 namespace Sbarbat\SyliusSagepayPlugin\Lib;
 
 use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
-use Sbarbat\SyliusSagepayPlugin\Action\AuthorizeAction;
-use Sbarbat\SyliusSagepayPlugin\Action\CancelAction;
-use Sbarbat\SyliusSagepayPlugin\Action\ConvertPaymentAction;
-use Sbarbat\SyliusSagepayPlugin\Action\CaptureAction;
-use Sbarbat\SyliusSagepayPlugin\Action\NotifyAction;
-use Sbarbat\SyliusSagepayPlugin\Action\RefundAction;
-use Sbarbat\SyliusSagepayPlugin\Action\StatusAction;
-use Payum\Core\Bridge\Spl\ArrayObject;
-use Payum\Core\GatewayFactory;
-
 use Sylius\Component\Core\Model\AddressInterface;
 
 class SagepayRequest
@@ -124,13 +114,13 @@ class SagepayRequest
         }
 
         foreach($this->queryMandatoryValues as $key) {
-            if (!isset($this->query[$key]) || isset($this->query[$key]) && !$this->validateField($this->query[$key])) {
+            if (!isset($this->query[$key]) || (isset($this->query[$key]) && !$this->validateField($this->query[$key]))) {
                 throw new SagepayApiException($key . ' must be in the query');
             }
         }
 
         foreach($this->query as $key => $value) {
-            if (null == $value) {
+            if (null === $value) {
                 unset($this->query[$key]);
             }
         }
@@ -138,7 +128,7 @@ class SagepayRequest
 
     protected function validateField($value): bool
     {
-        return $value != null;
+        return $value !== null;
     }
 
     protected function setAddress($prefix, AddressInterface $address): void
@@ -146,7 +136,7 @@ class SagepayRequest
         $this->addQuery($prefix . 'Surname', $address->getLastName());
         $this->addQuery($prefix . 'Firstnames', $address->getFirstName());
 
-        if (null == $address->getCompany()) {
+        if (null === $address->getCompany()) {
             $this->addQuery($prefix . 'Address1', $address->getStreet());
         } else {
             $this->addQuery($prefix . 'Address1', $address->getCompany());

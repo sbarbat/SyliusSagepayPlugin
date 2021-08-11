@@ -4,38 +4,17 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct;
 
-use Payum\Core\ApiAwareTrait;
-use Payum\Core\Request\Capture;
-use Payum\Core\Request\Convert;
-use Payum\Core\ApiAwareInterface;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Reply\HttpRedirect;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use Payum\Core\Reply\HttpPostRedirect;
-use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Request\GetStatusInterface;
-use Sbarbat\SyliusSagepayPlugin\SagepayDirectApi;
-use Sylius\Component\Core\Model\PaymentInterface;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayResponse;
-
 use Payum\Core\Exception\RequestNotSupportedException;
-
-use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
 use Sbarbat\SyliusSagepayPlugin\Sanitizers\NameSanitizer;
-
-use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
 use Sbarbat\SyliusSagepayPlugin\Sanitizers\AddressSanitizer;
 use Sbarbat\SyliusSagepayPlugin\Sanitizers\SanitizerInterface;
 use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
 
-final class ExecutePaymentAction extends DirectApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
+final class ExecutePaymentAction extends DirectApiAwareAction
 {
-    use GatewayAwareTrait;
-
     const US_CODE = "US";
 
     /** @var SanitizerInterface */
@@ -46,7 +25,7 @@ final class ExecutePaymentAction extends DirectApiAwareAction implements ActionI
 
     public function __construct()
     {
-        $this->apiClass = SagepayDirectApi::class;
+        parent::__construct();
         $this->nameSanitizer = new NameSanitizer();
         $this->addressSanitizer = new AddressSanitizer();
     }
