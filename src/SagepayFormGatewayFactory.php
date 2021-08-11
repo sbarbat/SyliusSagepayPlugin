@@ -20,7 +20,7 @@ class SagepayFormGatewayFactory extends GatewayFactory
         $config->defaults([
             'payum.factory_name' => 'sagepay',
             'payum.factory_title' => 'Sagepay Form',
-            'payum.action.capture' => new CaptureAction(),
+//            'payum.action.capture' => new CaptureAction(),
             // No needed for form integration for now
             //'payum.action.notify' => new NotifyAction(),
             'payum.action.status' => new StatusAction(),
@@ -43,7 +43,7 @@ class SagepayFormGatewayFactory extends GatewayFactory
             $config['payum.api'] = function (ArrayObject $config) {
                 $config->validateNotEmpty($config['payum.required_options']);
 
-                return new SagepayFormApi((array) $config, $config['payum.http_client'], $config['httplug.message_factory'], $config['sylius.province_naming_provider']);
+                return new SagepayFormApi((array) $config, $config['payum.http_client'], $config['httplug.message_factory']);
             };
         }
     }
