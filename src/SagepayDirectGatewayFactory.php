@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\AuthorizeAction;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\CancelAction;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\ConvertPaymentAction;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\CaptureAction;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\NotifyAction;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\RefundAction;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\StatusAction;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
@@ -58,7 +54,7 @@ class SagepayDirectGatewayFactory extends GatewayFactory
             $config['payum.api'] = function (ArrayObject $config) {
                 $config->validateNotEmpty($config['payum.required_options']);
 
-                return new SagepayDirectApi((array) $config, $config['payum.http_client'], $config['httplug.message_factory']);
+                return new SagepayDirectApi((array) $config, $config['payum.http_client'], $config['httplug.message_factory'], $config['sylius.province_naming_provider']);
             };
         }
 

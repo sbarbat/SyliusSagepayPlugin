@@ -7,10 +7,9 @@ namespace Sbarbat\SyliusSagepayPlugin;
 use Http\Message\MessageFactory;
 use Payum\Core\Exception\Http\HttpException;
 use Payum\Core\HttpClientInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
+use Psr\Http\Message\ResponseInterface;
+use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
+use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 
@@ -32,23 +31,29 @@ abstract class SagepayApi
     protected $options = [];
 
     /**
+     * @var ProvinceNamingProviderInterface
+     */
+    protected $provinceNamingProvider;
+
+    /**
      * @param array               $options
      * @param HttpClientInterface $client
      * @param MessageFactory      $messageFactory
      *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
-    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory)
+    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory, ProvinceNamingProviderInterface $provinceNamingProvider)
     {
         $this->options = $options;
         $this->client = $client;
         $this->messageFactory = $messageFactory;
+        $this->provinceNamingProvider = $provinceNamingProvider;
     }
 
     /**
      * @param array $fields
      *
-     * @return array
+     * @return ResponseInterface
      */
     protected function doRequest($method, $path, array $fields = [])
     {
@@ -60,7 +65,8 @@ abstract class SagepayApi
 
         $response = $this->client->send($request);
 
-        if (false == ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300)) {
+        $statusCode = $response->getStatusCode();
+        if (!($statusCode >= 200 && $statusCode < 300)) {
             throw HttpException::factory($request, $response);
         }
 
@@ -96,5 +102,10 @@ abstract class SagepayApi
     public function getTransactionCode(OrderInterface $order, PaymentInterface $payment)
     {
         return $order->getNumber() . '_' . $payment->getId() . '_' . time();
+    }
+
+    public function getStateCode(AddressInterface $address)
+    {
+        return $this->options['stateCodeAbbreviated'] ? $this->provinceNamingProvider->getAbbreviation($address) : $address->getProvinceCode();
     }
 }
