@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\AuthorizeAction;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\CancelAction;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\ConvertPaymentAction;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\CaptureAction;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\NotifyAction;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\RefundAction;
 use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\StatusAction;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
@@ -31,11 +27,10 @@ class SagepayFormGatewayFactory extends GatewayFactory
             'payum.action.convert' => new ConvertPaymentAction(),
         ]);
 
-        if (false == $config['payum.api']) {
+        if (!$config['payum.api']) {
             $config['payum.default_options'] = array(
                 'integration' => SagepayIntegrations::FORM,
                 'sandbox' => true,
-                'currency' => 'GBP',
                 'vendorName' => '',
                 'protocolVersion' => '3.00',
                 'encryptionPasswordLive' => '',

@@ -36,15 +36,6 @@ final class SagepayDirectGatewayConfigurationType extends AbstractType
                     ])
                 ],
             ])
-            ->add('currency', TextType::class, [
-                'label' => 'sbarbat_sylius_sagepay_plugin.ui.currency',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'sbarbat_sylius_sagepay_plugin.currency.not_blank',
-                        'groups' => ['sylius'],
-                    ])
-                ],
-            ])
             ->add('integrationKeyLive', TextType::class, [
                 'label' => 'sbarbat_sylius_sagepay_plugin.ui.integration_key_live',
                 'constraints' => [

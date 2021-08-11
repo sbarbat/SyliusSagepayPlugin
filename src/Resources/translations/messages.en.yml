@@ -4,7 +4,6 @@ sbarbat_sylius_sagepay_plugin:
         test: Sandbox
         live: Live
         vendor_name: Vendor name
-        currency: Currency code for payments
         encryptation_password_test: Encryption password for sandbox mode
         encryptation_password_live: Encryption password for live mode
         sagepay_form_gateway_label: Sagepay form gateway
