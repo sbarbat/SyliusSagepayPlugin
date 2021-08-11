@@ -25,13 +25,13 @@ class SagepayFormApi extends SagepayApi
     {
         $afterUrl = $request->getToken()->getAfterUrl();
         $order = $payment->getOrder();
-        $customer = $order->getCustomer();
 
         $request = new SagepayRequest($this);
 
         $request->addQuery('VendorTxCode', $payment->getDetails()['txCode']);
         $request->addQuery('Amount', (string) $payment->getAmount() / 100);
         $request->addQuery('Description', 'Payment for order #'. $order->getNumber());
+        $request->addQuery('Currency', $payment->getCurrencyCode());
 
         $request->addQuery('SuccessURL', $afterUrl);
         $request->addQuery('FailureURL', $afterUrl);

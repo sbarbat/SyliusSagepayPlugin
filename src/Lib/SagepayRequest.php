@@ -88,8 +88,6 @@ class SagepayRequest
         $this->request['Vendor'] = $this->api->getOptions()['vendorName'];
         $this->request['VPSProtocol'] = $this->api->getOptions()['protocolVersion'];
         $this->request['TxType'] = SagepayTransactionType::PAYMENT;
-
-        $this->addQuery('Currency', $this->api->getOption('currency'));
     }
 
     public function addQuery($key, $value): void
