@@ -4,33 +4,16 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 
-use Payum\Core\Action\ActionInterface;
 use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\ApiAwareInterface;
-use Payum\Core\ApiAwareTrait;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Convert;
-use Payum\Core\Request\Capture;
-use Payum\Core\Request\GetHttpRequest;
-use Payum\Core\Reply\HttpPostRedirect;
-use Payum\Core\Reply\HttpRedirect;
-use Payum\Core\Security\GenericTokenFactoryAwareInterface;
-use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-
 use Sylius\Component\Core\Model\PaymentInterface;
-
-use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayResponse;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
 use Sbarbat\SyliusSagepayPlugin\Action\Api\FormApiAwareAction;
 
-class StatusAction extends FormApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
+class StatusAction extends FormApiAwareAction
 {
-    use GatewayAwareTrait;
-
     /**
      * {@inheritDoc}
      *

@@ -4,31 +4,19 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct;
 
-use Payum\Core\Action\ActionInterface;
-use Payum\Core\ApiAwareInterface;
-use Payum\Core\ApiAwareTrait;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Convert;
 use Payum\Core\Request\Capture;
 use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Request\RenderTemplate;
 use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-
 use Sylius\Component\Core\Model\PaymentInterface;
-
-use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
 use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
-use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\ExecutePaymentAction;
 
-class CaptureAction extends DirectApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
+class CaptureAction extends DirectApiAwareAction implements GenericTokenFactoryAwareInterface
 {
-    use GatewayAwareTrait;
     use GenericTokenFactoryAwareTrait;
 
     /**

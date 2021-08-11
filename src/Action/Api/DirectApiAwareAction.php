@@ -12,7 +12,7 @@ use Payum\Core\GatewayAwareTrait;
 
 use Sbarbat\SyliusSagepayPlugin\SagepayDirectApi;
 
-abstract class DirectApiAwareAction implements GatewayAwareInterface, ApiAwareInterface
+abstract class DirectApiAwareAction implements ActionInterface, GatewayAwareInterface, ApiAwareInterface
 {
     use GatewayAwareTrait;
     use ApiAwareTrait;

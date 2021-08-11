@@ -4,43 +4,21 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct;
 
-use Payum\Core\Action\ActionInterface;
 use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\ApiAwareInterface;
-use Payum\Core\ApiAwareTrait;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Convert;
-use Payum\Core\Request\Capture;
 use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Reply\HttpPostRedirect;
-use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-use Payum\Core\Request\RenderTemplate;
-
 use Sylius\Component\Core\Model\PaymentInterface;
-
-use Sbarbat\SyliusSagepayPlugin\SagepayDirectApi;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayResponse;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayStatusType;
-
 use Sbarbat\SyliusSagepayPlugin\Action\Api\DirectApiAwareAction;
 use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
-use Sbarbat\SyliusSagepayPlugin\Action\Integrations\Direct\ExecutePaymentAction;
 
-class StatusAction extends DirectApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
+class StatusAction extends DirectApiAwareAction implements GenericTokenFactoryAwareInterface
 {
-    use GatewayAwareTrait,
-        GenericTokenFactoryAwareTrait;
-
-
-    public function __construct()
-    {
-        $this->apiClass = SagepayDirectApi::class;
-    }
+    use GenericTokenFactoryAwareTrait;
 
     /**
      * {@inheritDoc}
