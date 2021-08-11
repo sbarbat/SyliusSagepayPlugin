@@ -54,7 +54,7 @@ class SagepayDirectGatewayFactory extends GatewayFactory
             $config['payum.api'] = function (ArrayObject $config) {
                 $config->validateNotEmpty($config['payum.required_options']);
 
-                return new SagepayDirectApi((array) $config, $config['payum.http_client'], $config['httplug.message_factory'], $config['sylius.repository.province']);
+                return new SagepayDirectApi((array) $config, $config['payum.http_client'], $config['httplug.message_factory'], $config['sylius.province_naming_provider']);
             };
         }
 

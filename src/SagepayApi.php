@@ -7,15 +7,11 @@ namespace Sbarbat\SyliusSagepayPlugin;
 use Http\Message\MessageFactory;
 use Payum\Core\Exception\Http\HttpException;
 use Payum\Core\HttpClientInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use Psr\Http\Message\ResponseInterface;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
+use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\OrderInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 abstract class SagepayApi
 {
@@ -35,9 +31,9 @@ abstract class SagepayApi
     protected $options = [];
 
     /**
-     * @var RepositoryInterface
+     * @var ProvinceNamingProviderInterface
      */
-    protected $provinceRepository;
+    protected $provinceNamingProvider;
 
     /**
      * @param array               $options
@@ -46,12 +42,12 @@ abstract class SagepayApi
      *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
-    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory, RepositoryInterface $provinceRepository)
+    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory, ProvinceNamingProviderInterface $provinceNamingProvider)
     {
         $this->options = $options;
         $this->client = $client;
         $this->messageFactory = $messageFactory;
-        $this->provinceRepository = $provinceRepository;
+        $this->provinceNamingProvider = $provinceNamingProvider;
     }
 
     /**
@@ -110,6 +106,6 @@ abstract class SagepayApi
 
     public function getStateCode(AddressInterface $address)
     {
-        return $this->options['stateCodeAbbreviated'] ? $this->provinceRepository->findOneBy(['code' => $address->getProvinceCode()])->getAbbreviation($address) : $address->getProvinceCode();
+        return $this->options['stateCodeAbbreviated'] ? $this->provinceNamingProvider->getAbbreviation($address) : $address->getProvinceCode();
     }
 }
