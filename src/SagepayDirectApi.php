@@ -34,7 +34,7 @@ class SagepayDirectApi extends SagepayApi
             "Content-Type" => "application/json"
         ];
 
-        $fileds = array_merge($fields, [
+        $fields = array_merge($fields, [
             'vendorName' => $this->options['vendorName'],
         ]);
 
@@ -43,7 +43,8 @@ class SagepayDirectApi extends SagepayApi
 
         $response = $this->client->send($request);
 
-        if (false == ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300)) {
+        $statusCode = $response->getStatusCode();
+        if (!($statusCode >= 200 && $statusCode < 300)) {
             throw HttpException::factory($request, $response);
         }
 
