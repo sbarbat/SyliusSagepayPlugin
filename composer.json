@@ -13,7 +13,9 @@
     ],
     "require": {
         "php": "^7.1",
-        "sylius/sylius": "^1.1"
+        "sylius/sylius": "^1.1",
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
