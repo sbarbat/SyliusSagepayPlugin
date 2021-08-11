@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Http\Message\MessageFactory;
-use Payum\Core\Exception\Http\HttpException;
-use Payum\Core\HttpClientInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
 
-use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 class SagepayFormApi extends SagepayApi 
 {
@@ -25,6 +21,7 @@ class SagepayFormApi extends SagepayApi
     {
         $afterUrl = $request->getToken()->getAfterUrl();
         $order = $payment->getOrder();
+        assert($order instanceof OrderInterface);
 
         $request = new SagepayRequest($this);
 

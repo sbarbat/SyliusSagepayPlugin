@@ -154,7 +154,9 @@ class SagepayRequest
         }
 
         $this->addQuery($prefix . 'City', $address->getCity());
-        $this->addQuery($prefix . 'State', $address->getProvinceCode());
+        if ('US' === $address->getCountryCode()){
+            $this->addQuery($prefix . 'State',  $this->api->getStateCode($address));
+        }
         $this->addQuery($prefix . 'PostCode', $address->getPostcode());
         $this->addQuery($prefix . 'Country', $address->getCountryCode());
         $this->addQuery($prefix . 'Phone', $address->getPhoneNumber());
