@@ -12,6 +12,7 @@ use Sbarbat\SyliusSagepayPlugin\Request\Api\ExecutePayment;
 use Sbarbat\SyliusSagepayPlugin\Sanitizers\AddressSanitizer;
 use Sbarbat\SyliusSagepayPlugin\Sanitizers\NameSanitizer;
 use Sbarbat\SyliusSagepayPlugin\Sanitizers\SanitizerInterface;
+use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
 
 final class ExecutePaymentAction extends DirectApiAwareAction
 {
@@ -27,11 +28,17 @@ final class ExecutePaymentAction extends DirectApiAwareAction
      */
     private $addressSanitizer;
 
-    public function __construct()
+    /**
+     * @var ProvinceNamingProviderInterface
+     */
+    private $provinceNamingProvider;
+
+    public function __construct(ProvinceNamingProviderInterface $provinceNamingProvider)
     {
         parent::__construct();
         $this->nameSanitizer = new NameSanitizer();
         $this->addressSanitizer = new AddressSanitizer();
+        $this->provinceNamingProvider = $provinceNamingProvider;
     }
 
     /**
@@ -94,15 +101,15 @@ final class ExecutePaymentAction extends DirectApiAwareAction
         ];
 
         if (static::US_CODE === $shippingAddress->getCountryCode()) {
-            $request['shippingDetails']['shippingState'] = $this->api->getOption(
-                'stateCodeAbbreviated'
-            ) ? $shippingAddress->getAbbreviation() : $shippingAddress->getProvinceCode();
+            $request['shippingDetails']['shippingState'] = $this->api->getOption('stateCodeAbbreviated')
+                ? $this->provinceNamingProvider->getAbbreviation($shippingAddress)
+                : $shippingAddress->getProvinceCode();
         }
 
         if (static::US_CODE === $billingAddress->getCountryCode()) {
-            $request['billingAddress']['state'] = $this->api->getOption(
-                'stateCodeAbbreviated'
-            ) ? $billingAddress->getAbbreviation() : $billingAddress->getProvinceCode();
+            $request['billingAddress']['state'] = $this->api->getOption('stateCodeAbbreviated')
+                ? $this->provinceNamingProvider->getAbbreviation($billingAddress)
+                : $billingAddress->getProvinceCode();
         }
 
         $curl = curl_init();

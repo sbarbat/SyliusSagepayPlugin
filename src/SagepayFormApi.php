@@ -6,6 +6,7 @@ namespace Sbarbat\SyliusSagepayPlugin;
 
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
+use Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider;
 use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -27,9 +28,9 @@ class SagepayFormApi extends SagepayApi
         $request,
         ArrayObject $model,
         PaymentInterface $payment,
-        ProvinceNamingProviderInterface $provinceNamingProvider
-    ): SagepayRequest
-    {
+        ProvinceNamingProviderInterface $provinceNamingProvider,
+        AmountProvider $amountProvider
+    ): SagepayRequest {
         $this->provinceNamingProvider = $provinceNamingProvider;
         $afterUrl = $request->getToken()
             ->getAfterUrl()
@@ -40,7 +41,7 @@ class SagepayFormApi extends SagepayApi
         $request = new SagepayRequest($this);
 
         $request->addQuery('VendorTxCode', $payment->getDetails()['txCode']);
-        $request->addQuery('Amount', (string) $payment->getAmount() / 100);
+        $request->addQuery('Amount', $amountProvider->getAmount($payment));
         $request->addQuery('Description', 'Payment for order #'.$order->getNumber());
         $request->addQuery('Currency', $payment->getCurrencyCode());
 
