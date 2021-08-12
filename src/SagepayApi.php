@@ -7,15 +7,9 @@ namespace Sbarbat\SyliusSagepayPlugin;
 use Http\Message\MessageFactory;
 use Payum\Core\Exception\Http\HttpException;
 use Payum\Core\HttpClientInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use Psr\Http\Message\ResponseInterface;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
-use Sylius\Component\Core\Model\AddressInterface;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\OrderInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 abstract class SagepayApi
 {
@@ -35,46 +29,13 @@ abstract class SagepayApi
     protected $options = [];
 
     /**
-     * @var RepositoryInterface
-     */
-    protected $provinceRepository;
-
-    /**
-     * @param array               $options
-     * @param HttpClientInterface $client
-     * @param MessageFactory      $messageFactory
-     *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
-    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory, RepositoryInterface $provinceRepository)
+    public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory)
     {
         $this->options = $options;
         $this->client = $client;
         $this->messageFactory = $messageFactory;
-        $this->provinceRepository = $provinceRepository;
-    }
-
-    /**
-     * @param array $fields
-     *
-     * @return ResponseInterface
-     */
-    protected function doRequest($method, $path, array $fields = [])
-    {
-        $headers = [
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
-
-        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint(), $headers, http_build_query($fields));
-
-        $response = $this->client->send($request);
-
-        $statusCode = $response->getStatusCode();
-        if (!($statusCode >= 200 && $statusCode < 300)) {
-            throw HttpException::factory($request, $response);
-        }
-
-        return $response;
     }
 
     /**
@@ -105,11 +66,35 @@ abstract class SagepayApi
 
     public function getTransactionCode(OrderInterface $order, PaymentInterface $payment)
     {
-        return $order->getNumber() . '_' . $payment->getId() . '_' . time();
+        return $order->getNumber().'_'.$payment->getId().'_'.time();
     }
 
-    public function getStateCode(AddressInterface $address)
+    /**
+     * @param mixed $method
+     * @param mixed $path
+     *
+     * @return ResponseInterface
+     */
+    protected function doRequest($method, $path, array $fields = [])
     {
-        return $this->options['stateCodeAbbreviated'] ? $this->provinceRepository->findOneBy(['code' => $address->getProvinceCode()])->getAbbreviation($address) : $address->getProvinceCode();
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $request = $this->messageFactory->createRequest(
+            $method,
+            $this->getApiEndpoint(),
+            $headers,
+            http_build_query($fields)
+        );
+
+        $response = $this->client->send($request);
+
+        $statusCode = $response->getStatusCode();
+        if (! ($statusCode >= 200 && $statusCode < 300)) {
+            throw HttpException::factory($request, $response);
+        }
+
+        return $response;
     }
 }

@@ -6,9 +6,12 @@ namespace Sbarbat\SyliusSagepayPlugin\Tests;
 
 use Sbarbat\SyliusSagepayPlugin\SagepayGatewayFactory;
 
-class SagepayFormTest extends \PHPUnit\Framework\TestCase 
+/**
+ * @internal
+ * @coversNothing
+ */
+final class SagepayFormTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
      * @test
      */
@@ -16,7 +19,9 @@ class SagepayFormTest extends \PHPUnit\Framework\TestCase
     {
         $factory = new SagepayGatewayFactory();
 
-        $gateway = $factory->create(array('vendorName' => 'winebuyers'));
+        $gateway = $factory->create([
+            'vendorName' => 'winebuyers',
+        ]);
 
         $this->assertInstanceOf('Payum\Core\Gateway', $gateway);
         $this->assertAttributeNotEmpty('apis', $gateway);
@@ -37,12 +42,12 @@ class SagepayFormTest extends \PHPUnit\Framework\TestCase
         $this->assertInternalType('array', $config);
         $this->assertArrayHasKey('payum.default_options', $config);
 
-        $this->assertEquals(array(
+        $this->assertEquals([
             'sandbox' => true,
             'currency' => 'GBP',
             'vendorName' => '',
-            'protocolVersion' => 3.00
-        ), $config['payum.default_options']);
+            'protocolVersion' => 3.00,
+        ], $config['payum.default_options']);
     }
 
     /**

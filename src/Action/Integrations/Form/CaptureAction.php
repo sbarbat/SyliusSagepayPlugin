@@ -4,34 +4,40 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form;
 
-use Payum\Core\Action\ActionInterface;
-use Payum\Core\ApiAwareInterface;
-use Payum\Core\ApiAwareTrait;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Convert;
-use Payum\Core\Request\Capture;
-use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Reply\HttpPostRedirect;
-use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Request\Capture;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-
-use Sbarbat\SyliusSagepayPlugin\SagepayFormApi;
+use Sbarbat\SyliusSagepayPlugin\Action\Api\FormApiAwareAction;
+use Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider;
+use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-use Sbarbat\SyliusSagepayPlugin\Action\Api\FormApiAwareAction;
-
-class CaptureAction extends FormApiAwareAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface, GenericTokenFactoryAwareInterface
+class CaptureAction extends FormApiAwareAction implements GenericTokenFactoryAwareInterface
 {
-    use GatewayAwareTrait;
     use GenericTokenFactoryAwareTrait;
 
     /**
-     * {@inheritDoc}
-     *
+     * @var ProvinceNamingProviderInterface
+     */
+    private $provinceNamingProvider;
+    /**
+     * @var AmountProvider
+     */
+    private $amountProvider;
+
+    public function __construct(
+        ProvinceNamingProviderInterface $provinceNamingProvider,
+        AmountProvider $amountProvider
+    ) {
+        parent::__construct();
+        $this->provinceNamingProvider = $provinceNamingProvider;
+        $this->amountProvider = $amountProvider;
+    }
+
+    /**
      * @param Capture $request
      */
     public function execute($request)
@@ -40,20 +46,19 @@ class CaptureAction extends FormApiAwareAction implements ActionInterface, ApiAw
 
         $model = ArrayObject::ensureArrayObject($request->getModel());
         $payment = $request->getFirstModel();
-        
-        throw new HttpPostRedirect(
-            $this->api->getOffsiteEndpoint(),
-            $this->api->preparePayment($request, $model, $payment)->getRequest()
-        );
+
+        throw new HttpPostRedirect($this->api->getOffsiteEndpoint(), $this->api->preparePayment(
+            $request,
+            $model,
+            $payment,
+            $this->provinceNamingProvider,
+            $this->amountProvider
+        )->getRequest());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supports($request)
     {
-        return
-            $request instanceof Capture &&
+        return $request instanceof Capture &&
             $request->getModel() instanceof \ArrayAccess &&
             $request->getFirstModel() instanceof PaymentInterface
         ;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sbarbat\SyliusSagepayPlugin\Sanitizers;
 
 abstract class AbstractSanitizer implements SanitizerInterface
@@ -17,9 +19,9 @@ abstract class AbstractSanitizer implements SanitizerInterface
 
         return substr($str, 0, $maxLength - 1);
     }
-    
+
     protected function clean(string $str): string
-    {         
+    {
         return preg_replace('/[^A-Za-z0-9\-\ ]/', '', $str);
     }
 }

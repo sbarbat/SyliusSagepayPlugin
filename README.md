@@ -25,6 +25,40 @@ public function registerBundles()
 }
 ```
 
+### Optional Installation steps
+
+#### Money Amount Conversion
+
+By default sylius stores prices as integer values representing the amount in cents/pence or smallest unit. 
+
+If you have modified sylius to store money amounts in a different format, or with a different precision, then you will need to override.
+
+Example, if your copy of sylius stores 4 decimals instead of 2, then you will need to override the class like this:
+
+```php
+<?php declare(strict_types = 1);
+
+namespace App\Provider\Sagepay;
+
+use Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider as BaseAmountProvider;
+use Sylius\Component\Core\Model\PaymentInterface;
+
+
+class AmountProvider extends BaseAmountProvider
+{
+	public function getAmount(PaymentInterface $payment): string
+	{
+		return (string) ($payment->getAmount() / 10000);
+	}
+}
+```
+
+and add an entry to your service config to point to it:
+```yaml
+    Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider:
+        class: App\Provider\Sagepay\AmountProvider
+
+```
 
 ### Test Cards
 

@@ -1,3 +1,19 @@
 imports:
     - { resource: "services/gateway_configuration.yml" }
     - { resource: "services/gateway_factory.yml" }
+#    - { resource: "services/provider.yml" }
+
+
+services:
+    Sbarbat\SyliusSagepayPlugin\Action\Integrations\Form\CaptureAction:
+        arguments:
+            - '@sylius.province_naming_provider'
+            - '@Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider'
+        public: true
+        tags:
+            - { name: payum.action, factory: sagepay, alias: payum.action.capture}
+
+    Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider: ~
+
+
+
