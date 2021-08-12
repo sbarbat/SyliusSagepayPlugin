@@ -67,8 +67,7 @@ class SagepayUtil
         array $nonSensitiveDataKey,
         $delimiter = '&',
         $urlencoded = false
-    )
-    {
+    ) {
         $queryString = '';
         $delimiterLength = strlen($delimiter);
 

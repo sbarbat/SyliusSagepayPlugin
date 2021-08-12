@@ -11,6 +11,7 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sbarbat\SyliusSagepayPlugin\Action\Api\FormApiAwareAction;
+use Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider;
 use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
@@ -22,11 +23,18 @@ class CaptureAction extends FormApiAwareAction implements GenericTokenFactoryAwa
      * @var ProvinceNamingProviderInterface
      */
     private $provinceNamingProvider;
+    /**
+     * @var AmountProvider
+     */
+    private $amountProvider;
 
-    public function __construct(ProvinceNamingProviderInterface $provinceNamingProvider)
-    {
+    public function __construct(
+        ProvinceNamingProviderInterface $provinceNamingProvider,
+        AmountProvider $amountProvider
+    ) {
         parent::__construct();
         $this->provinceNamingProvider = $provinceNamingProvider;
+        $this->amountProvider = $amountProvider;
     }
 
     /**
@@ -43,7 +51,8 @@ class CaptureAction extends FormApiAwareAction implements GenericTokenFactoryAwa
             $request,
             $model,
             $payment,
-            $this->provinceNamingProvider
+            $this->provinceNamingProvider,
+            $this->amountProvider
         )->getRequest());
     }
 
