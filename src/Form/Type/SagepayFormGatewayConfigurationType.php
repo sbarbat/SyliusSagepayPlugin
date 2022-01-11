@@ -9,14 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
-
 
 final class SagepayFormGatewayConfigurationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -33,16 +28,7 @@ final class SagepayFormGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.vendor_name.not_blank',
                         'groups' => ['sylius'],
-                    ])
-                ],
-            ])
-            ->add('currency', TextType::class, [
-                'label' => 'sbarbat_sylius_sagepay_plugin.ui.currency',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'sbarbat_sylius_sagepay_plugin.currency.not_blank',
-                        'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('encryptionPasswordTest', TextType::class, [
@@ -51,7 +37,7 @@ final class SagepayFormGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.encryptation_password_test.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
                 ],
             ])
             ->add('encryptionPasswordLive', TextType::class, [
@@ -60,7 +46,15 @@ final class SagepayFormGatewayConfigurationType extends AbstractType
                     new NotBlank([
                         'message' => 'sbarbat_sylius_sagepay_plugin.encryptation_password_live.not_blank',
                         'groups' => ['sylius'],
-                    ])
+                    ]),
+                ],
+            ])
+            ->add('stateCodeAbbreviated', ChoiceType::class, [
+                'label' => 'sbarbat_sylius_sagepay_plugin.ui.state_code_abbreviated',
+                'help' => 'sbarbat_sylius_sagepay_plugin.ui.state_code_abbreviated_help',
+                'choices' => [
+                    'sbarbat_sylius_sagepay_plugin.ui.province_abbreviation' => true,
+                    'sbarbat_sylius_sagepay_plugin.ui.province_code' => false,
                 ],
             ])
         ;

@@ -7,12 +7,9 @@ namespace Sbarbat\SyliusSagepayPlugin;
 use Http\Message\MessageFactory;
 use Payum\Core\Exception\Http\HttpException;
 use Payum\Core\HttpClientInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
-use Sylius\Component\Core\Model\PaymentInterface;
+use Psr\Http\Message\ResponseInterface;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 abstract class SagepayApi
 {
@@ -32,10 +29,6 @@ abstract class SagepayApi
     protected $options = [];
 
     /**
-     * @param array               $options
-     * @param HttpClientInterface $client
-     * @param MessageFactory      $messageFactory
-     *
      * @throws \Payum\Core\Exception\InvalidArgumentException if an option is invalid
      */
     public function __construct(array $options, HttpClientInterface $client, MessageFactory $messageFactory)
@@ -43,28 +36,6 @@ abstract class SagepayApi
         $this->options = $options;
         $this->client = $client;
         $this->messageFactory = $messageFactory;
-    }
-
-    /**
-     * @param array $fields
-     *
-     * @return array
-     */
-    protected function doRequest($method, $path, array $fields = [])
-    {
-        $headers = [
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
-
-        $request = $this->messageFactory->createRequest($method, $this->getApiEndpoint(), $headers, http_build_query($fields));
-
-        $response = $this->client->send($request);
-
-        if (false == ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300)) {
-            throw HttpException::factory($request, $response);
-        }
-
-        return $response;
     }
 
     /**
@@ -95,6 +66,35 @@ abstract class SagepayApi
 
     public function getTransactionCode(OrderInterface $order, PaymentInterface $payment)
     {
-        return $order->getNumber() . '_' . $payment->getId() . '_' . time();
+        return $order->getNumber().'_'.$payment->getId().'_'.time();
+    }
+
+    /**
+     * @param mixed $method
+     * @param mixed $path
+     *
+     * @return ResponseInterface
+     */
+    protected function doRequest($method, $path, array $fields = [])
+    {
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $request = $this->messageFactory->createRequest(
+            $method,
+            $this->getApiEndpoint(),
+            $headers,
+            http_build_query($fields)
+        );
+
+        $response = $this->client->send($request);
+
+        $statusCode = $response->getStatusCode();
+        if (! ($statusCode >= 200 && $statusCode < 300)) {
+            throw HttpException::factory($request, $response);
+        }
+
+        return $response;
     }
 }

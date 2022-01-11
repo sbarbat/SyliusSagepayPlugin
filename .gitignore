@@ -1,0 +1,9 @@
+# Package Control
+/composer.lock
+
+# Vendor Files
+/vendor
+
+# IDE/Workspace settings
+/.idea
+

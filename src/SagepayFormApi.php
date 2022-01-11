@@ -4,34 +4,46 @@ declare(strict_types=1);
 
 namespace Sbarbat\SyliusSagepayPlugin;
 
-use Http\Message\MessageFactory;
-use Payum\Core\Exception\Http\HttpException;
-use Payum\Core\HttpClientInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use Sbarbat\SyliusSagepayPlugin\Lib\SagepayUtil;
 use Sbarbat\SyliusSagepayPlugin\Lib\SagepayRequest;
-
-use Sylius\Component\Core\Model\PaymentInterface;
+use Sbarbat\SyliusSagepayPlugin\Provider\AmountProvider;
+use Sylius\Component\Addressing\Provider\ProvinceNamingProviderInterface;
+use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 
-class SagepayFormApi extends SagepayApi 
+class SagepayFormApi extends SagepayApi
 {
     /**
-     * @param  array $params
+     * @var ProvinceNamingProviderInterface
+     */
+    private $provinceNamingProvider;
+
+    /**
+     * @param mixed $request
      *
      * @return array
      */
-    public function preparePayment($request, ArrayObject $model, PaymentInterface $payment): SagepayRequest
-    {
-        $afterUrl = $request->getToken()->getAfterUrl();
+    public function preparePayment(
+        $request,
+        ArrayObject $model,
+        PaymentInterface $payment,
+        ProvinceNamingProviderInterface $provinceNamingProvider,
+        AmountProvider $amountProvider
+    ): SagepayRequest {
+        $this->provinceNamingProvider = $provinceNamingProvider;
+        $afterUrl = $request->getToken()
+            ->getAfterUrl()
+        ;
         $order = $payment->getOrder();
-        $customer = $order->getCustomer();
+        assert($order instanceof OrderInterface);
 
         $request = new SagepayRequest($this);
 
         $request->addQuery('VendorTxCode', $payment->getDetails()['txCode']);
-        $request->addQuery('Amount', (string) $payment->getAmount() / 100);
-        $request->addQuery('Description', 'Payment for order #'. $order->getNumber());
+        $request->addQuery('Amount', $amountProvider->getAmount($payment));
+        $request->addQuery('Description', 'Payment for order #'.$order->getNumber());
+        $request->addQuery('Currency', $payment->getCurrencyCode());
 
         $request->addQuery('SuccessURL', $afterUrl);
         $request->addQuery('FailureURL', $afterUrl);
@@ -42,9 +54,15 @@ class SagepayFormApi extends SagepayApi
         return $request;
     }
 
-    public function getFormEncryptionPassword() 
+    public function getFormEncryptionPassword()
     {
         return $this->options['sandbox'] ? $this->options['encryptionPasswordTest'] : $this->options['encryptionPasswordLive'];
     }
 
+    public function getStateCode(AddressInterface $address)
+    {
+        return $this->options['stateCodeAbbreviated'] ? $this->provinceNamingProvider->getAbbreviation(
+            $address
+        ) : $address->getProvinceCode();
+    }
 }

@@ -4,7 +4,6 @@ sbarbat_sylius_sagepay_plugin:
         test: Sandbox
         live: Live
         vendor_name: Vendor name
-        currency: Currency code for payments
         encryptation_password_test: Encryption password for sandbox mode
         encryptation_password_live: Encryption password for live mode
         sagepay_form_gateway_label: Sagepay form gateway
@@ -18,3 +17,13 @@ sbarbat_sylius_sagepay_plugin:
         integration_password_live: Live integration password
         integration_key_test: Test integration key
         integration_password_test: Test integration password
+        state_code_abbreviated: Province field to use for US State Code.
+        state_code_abbreviated_help: |
+            Code is unqiue for all provinces.
+            If you have provinces configured for countries other than US, it is
+            possible that the 2 Char state code is not used for the code, In
+            this case it is recommended to put the 2 char code in the
+            abbreviation field and select that option here.
+        province_code: Use the Unique Code Field
+        province_abbreviation: Use the Abbreviation
+        
